@@ -19,7 +19,7 @@ export const Sidebar = () => {
     return (
         <>
             <ul className="menu">
-            <li>
+                <li>
                     <SidebarIcon
                         label="dashboard"
                         path={BarchartIcon}
@@ -90,6 +90,7 @@ export const Sidebar = () => {
                     />
                 </li>
             </ul>
+            
 
         </>
     )

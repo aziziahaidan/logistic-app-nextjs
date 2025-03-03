@@ -9,7 +9,7 @@ interface AnimatedIconProps {
     hover?: boolean;
 }
 
-const AnimatedIcon: React.FC<AnimatedIconProps> = ({ path, width = "50px", height = "50px", loop = false, hover = false }) => {
+const AnimatedIcon: React.FC<AnimatedIconProps> = ({ path, width = "50px", height = "50px", loop = true, hover = false }) => {
     const lottieContainer = useRef<HTMLDivElement | null>(null);
     const animationInstance = useRef<AnimationItem | null>(null);
 

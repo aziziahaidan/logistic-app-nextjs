@@ -59,3 +59,12 @@ export async function submitUser(formData: FormData, id: string) {
 
 
 }
+
+export async function getAllRoles() {
+
+    const rolesCollection = await getCollection("roles");
+    let roles = await rolesCollection?.find().toArray();
+    roles = JSON.parse(JSON.stringify(roles));
+    return roles;
+
+}

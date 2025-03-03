@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { AlertContainer } from "@/components/AlertContainer";
+import { Alert2 } from "@/components/Alert2";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,6 +25,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+  
   return (
     <html lang="en" data-theme="night">
       <body
@@ -33,10 +37,11 @@ export default function RootLayout({
             <Sidebar />
           </div>
           <div className="flex-1 md:ml-56 p-4">
+            {/* <AlertContainer /> */}
+            <Alert2 message={"Hello"} type={"success"} />
             {children}
           </div>
         </div>
-
       </body>
     </html>
   );
