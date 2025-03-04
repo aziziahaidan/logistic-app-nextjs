@@ -4,7 +4,7 @@ export async function GET() {
   try {
     const usersCollection = await getCollection("users");
 
-    const users = await usersCollection.aggregate([
+    let users = await usersCollection.aggregate([
       {
         $lookup: {
           from: "roles",
@@ -13,8 +13,18 @@ export async function GET() {
           as: "role"
         }
       },
+      { 
+        $unwind: { 
+          path: "$role", 
+          preserveNullAndEmptyArrays: true // allows missing roles
+        } 
+      },
+      {
+        $addFields: {
+          role: { $ifNull: ["$role", {}] } // cant find role return {}
+        }
+      }
     ]).toArray();
-
     return Response.json(users);
   } catch (error) {
     console.error(error);

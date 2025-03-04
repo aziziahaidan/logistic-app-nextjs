@@ -14,7 +14,31 @@ interface FormData {
 export async function getAllUsers() {
 
     const usersCollection = await getCollection("users");
-    let users = await usersCollection?.find().toArray();
+
+    // let users = await usersCollection?.find().toArray(); // get all
+
+    let users = await usersCollection.aggregate([
+        {
+          $lookup: {
+            from: "roles",
+            localField: "roleId",
+            foreignField: "_id",
+            as: "role"
+          }
+        },
+        { 
+          $unwind: { 
+            path: "$role", 
+            preserveNullAndEmptyArrays: true // allows missing roles
+          } 
+        },
+        {
+          $addFields: {
+            role: { $ifNull: ["$role", {}] } // cant find role return {}
+          }
+        }
+      ]).toArray();
+
     users = JSON.parse(JSON.stringify(users));
     return users;
 
@@ -45,19 +69,41 @@ export async function submitUser(formData: FormData, id: string) {
         joinDate: formData.joinDate,
     };
 
-    if (id !== "new") {
-        const updateResult = await usersCollection.updateOne(
-            { _id: new ObjectId(id) },
-            { $set: payload }
-        );
-        return JSON.parse(JSON.stringify(updateResult));
+    try {
+        let result;
+        if (id !== "new") {
+            const updateResult = await usersCollection.updateOne(
+                { _id: new ObjectId(id) },
+                { $set: payload }
+            );
+            result = updateResult;
+        } else {
+            const insertResult = await usersCollection.insertOne(payload);
+            result = insertResult;
+        }
 
-    } else {
-        const insertResult = await usersCollection.insertOne(payload);
-        return JSON.parse(JSON.stringify(insertResult));
+        // Check if the operation was successful
+        if (result.acknowledged) {
+            return {
+                status: 200,
+                message: id !== "new" ? "User updated successfully" : "User added successfully",
+                data: result
+            };
+        } else {
+            return {
+                status: 500,
+                message: "Operation not acknowledged by the database"
+            };
+        }
+
+    } catch (e) {
+        console.error("Error in submitUser:", e);
+        return {
+            status: 500,
+            message: "Internal server error",
+            error: "Error in submitUser:"
+        };
     }
-
-
 }
 
 export async function getAllRoles() {

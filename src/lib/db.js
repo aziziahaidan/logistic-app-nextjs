@@ -2,6 +2,8 @@
 "use server"
 import { MongoClient, ServerApiVersion } from "mongodb";
 
+console.log(process.env.DB_URI)
+
 if (!process.env.DB_URI) {
     throw new Error('Mongo URI not found');
 }

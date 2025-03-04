@@ -2,20 +2,16 @@
 import { PlusIcon } from '@heroicons/react/24/outline';
 import StyledDataGrid from '../../components/StyledDataGrid';
 import { useRouter } from 'next/navigation';
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid';
-import { getAllUsers, getAllRoles } from '@/actions/auth';
+import { GridColDef, GridCellParams } from '@mui/x-data-grid';
+import { getAllUsers } from '@/actions/auth';
 import { useEffect, useState } from 'react';
 import LoadingOverlay from '../../components/LoadingOverlay';
-import { useAlert } from '@/hook/useAlert';
-// import Alert from '../../components/Alert';
 
 export default function Staff() {
 
     const router = useRouter();
-    const { showAlert, setShow } = useAlert();
 
     const [data, setData] = useState([]);
-    const [roleList, setRoleList] = useState([]);
     const [isLoading, setIsLoading] = useState(true)
 
     const columns: GridColDef[] = [
@@ -28,10 +24,18 @@ export default function Staff() {
         { field: 'name', headerName: 'Name', type: 'string', minWidth: 20, flex: 2 },
         { field: 'email', headerName: 'Email', type: 'string', minWidth: 20, flex: 2 },
         {
+            field: 'position',
+            headerName: 'Position',
+            flex: 2,
+            renderCell: (params: GridCellParams) => (
+                <p>{params.row?.role?.position}</p> // pointing to obj
+            )
+        },
+        {
             field: 'action',
             headerName: 'Action',
             width: 150,
-            renderCell: (params: GridRenderCellParams) => (
+            renderCell: (params: GridCellParams) => (
                 <button
                     className='btn btn-sm btn-neutral'
                     onClick={() => router.push(`/staff/${params.id}`)}
@@ -45,10 +49,14 @@ export default function Staff() {
 
     useEffect(() => {
         const fetchData = async () => {
-            const users = await getAllUsers();
+            // const res = await fetch("/api/users"); // fetch data using api way
+            // const data = await res.json(); // convert
+            // setUser(data)
+
+            let users = await getAllUsers();
+
+
             setData(users);
-            const roles = await getAllRoles();
-            setRoleList(roles);
             setIsLoading(false);
         };
         fetchData();
@@ -56,12 +64,6 @@ export default function Staff() {
 
     return (
         <div className="p-4">
-            <button
-                className="btn btn-neutral btn-sm"
-                onClick={() => {
-                    showAlert("This is a success message!", "success");
-                }}
-            >Test</button>
             <div className="relative">
                 <div className="p-5 rounded-lg bg-base-300">
                     <div className="mb-2">
