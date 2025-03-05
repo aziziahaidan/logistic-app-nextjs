@@ -36,3 +36,20 @@ export const validateNumber = (
         setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
     }
 };
+
+export const validateSelect = (
+    e: React.ChangeEvent<HTMLSelectElement>,
+    setErrors: React.Dispatch<React.SetStateAction<Record<string, any>>>
+) => {
+    const { name, value } = e.target;
+
+    let isEmpty = validator.isEmpty(value);
+
+    if (isEmpty) {
+        e.target.classList.add("input-error");
+        setErrors((prevErrors) => ({ ...prevErrors, [name]: `Please select ${[name]}` }));
+    } else {
+        e.target.classList.remove("input-error");
+        setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
+    }
+};

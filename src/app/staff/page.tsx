@@ -3,9 +3,9 @@ import { PlusIcon } from '@heroicons/react/24/outline';
 import StyledDataGrid from '../../components/StyledDataGrid';
 import { useRouter } from 'next/navigation';
 import { GridColDef, GridCellParams } from '@mui/x-data-grid';
-import { getAllUsers } from '@/actions/auth';
 import { useEffect, useState } from 'react';
 import LoadingOverlay from '../../components/LoadingOverlay';
+import { ToastContainer, toast } from 'react-toastify';
 
 export default function Staff() {
 
@@ -49,15 +49,31 @@ export default function Staff() {
 
     useEffect(() => {
         const fetchData = async () => {
-            // const res = await fetch("/api/users"); // fetch data using api way
-            // const data = await res.json(); // convert
-            // setUser(data)
 
-            let users = await getAllUsers();
+            try {
+                const res = await fetch("/api/users");
+
+                if (!res.ok) {
+                    toast.error('Error, please try again');
+                    throw new Error(`HTTP error! Status: ${res.status}`);
+                }
+
+                const data = await res.json();
+                setData(data)
+                setIsLoading(false);
 
 
-            setData(users);
-            setIsLoading(false);
+            } catch (error) {
+                toast.error('Error, please try again');
+
+            }
+
+            // let users = await getAllUsers();
+            // setData(users)
+            // setIsLoading(false);
+
+
+
         };
         fetchData();
     }, [])
@@ -82,6 +98,18 @@ export default function Staff() {
                 </div>
                 <LoadingOverlay isLoading={isLoading} />
             </div>
+            <ToastContainer
+                position="top-right"
+                autoClose={1000}
+                hideProgressBar={true}
+                newestOnTop={false}
+                closeOnClick={false}
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
         </div>
     );
 }

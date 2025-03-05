@@ -9,6 +9,8 @@ interface FormData {
     icNo?: string;
     dateOfBirth?: string;
     joinDate?: string;
+    roleId?: string;
+    position?:string
 }
 
 export async function getAllUsers() {
@@ -67,6 +69,7 @@ export async function submitUser(formData: FormData, id: string) {
         icNo: formData.icNo,
         dateOfBirth: formData.dateOfBirth,
         joinDate: formData.joinDate,
+        roleId: formData.position ? new ObjectId(formData.position) : undefined
     };
 
     try {

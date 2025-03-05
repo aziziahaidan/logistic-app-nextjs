@@ -3,11 +3,11 @@
 import BackToListing from '../../../components/BackToListing';
 import { usePathname, useParams } from 'next/navigation';
 import { ChangeEvent, useState, useEffect } from 'react';
-import { getUserById, submitUser, getAllRoles } from '@/actions/auth';
+import { submitUser, getAllRoles } from '@/actions/auth';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
-import { validateEmpty, validateNumber, validateSelect } from '@/components/Validation';
+import { validateEmpty, validateNumber } from '@/components/Validation';
 
 
 interface Role {
@@ -18,11 +18,10 @@ interface Role {
 interface FormData {
     name?: string;
     email?: string;
+    telNo?: string;
     phoneNo?: string;
-    icNo?: string;
-    dateOfBirth?: string;
-    joinDate?: string;
-    position?: string;
+    address?: string;
+    location?: string;
 }
 
 interface Errors {
@@ -34,8 +33,6 @@ interface Errors {
 
 export default function Staff() {
 
-    const [roleList, setRoleList] = useState<Role[]>([]);
-
     const params = useParams();
     const id = params.id;
     const pathname = usePathname();
@@ -46,13 +43,9 @@ export default function Staff() {
     const [errors, setErrors] = useState<Errors>({})
     const [isLoading, setIsLoading] = useState(true);
 
-    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
     }
-
-    const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
@@ -82,29 +75,18 @@ export default function Staff() {
 
     useEffect(() => {
         const fetchData = async () => {
+            console.log(id)
 
             try {
-                const res = await fetch(`/api/users/${id}`);
+                const res = await fetch(`/api/company/${id}`);
 
                 if (!res.ok) {
                     toast.error("Something went wrong, Please try again.");
                     throw new Error(`Error: ${res.status}`);
                 }
                 const data = await res.json();
-
-                let roles: Role[] = await getAllRoles();
-
-                roles = roles.map((obj) => ({
-                    ...obj,
-                    value: obj._id,
-                    label: obj.position
-                }));
-
-                setRoleList(roles);
-                setFormData({
-                    ...data,
-                    position: data.roleId ? roles.find(x => x._id === data.roleId)?._id : ""
-                });
+               
+                setFormData(data);
                 setIsLoading(false);
 
             } catch (error) {
@@ -135,13 +117,13 @@ export default function Staff() {
                     <div className='md:mx-80 card bg-primary-content text-neutral-content shadow-xl p-6'>
                         <form onSubmit={handleSubmit} autoComplete='off'>
                             <div className="grid grid-cols-2 gap-4 px-2">
-                                <p className=" col-span-2 text-2xl text-center ">Staff</p>
+                                <p className=" col-span-2 text-2xl text-center ">Company</p>
                                 <div className='col-span-2'>
                                     <label className="label">
-                                        <span className="label-text">Name</span>
+                                        <span className="label-text">Company Name</span>
                                     </label>
                                     <input
-                                        placeholder="Enter your name"
+                                        placeholder="Enter name"
                                         className="input input-sm input-bordered w-full"
                                         name="name"
                                         onChange={handleChange}
@@ -156,7 +138,7 @@ export default function Staff() {
                                         <span className="label-text">Email</span>
                                     </label>
                                     <input
-                                        placeholder="Enter your email"
+                                        placeholder="Enter email"
                                         className="input input-sm input-bordered w-full"
                                         name="email"
                                         onChange={handleChange}
@@ -166,10 +148,23 @@ export default function Staff() {
                                 </div>
                                 <div className='col-span-1'>
                                     <label className="label">
+                                        <span className="label-text">Tel No.</span>
+                                    </label>
+                                    <input
+                                        placeholder="Enter Phone No"
+                                        className="input input-sm input-bordered w-full"
+                                        name="telNo"
+                                        onChange={handleChange}
+                                        onBlur={(e) => validateNumber(e, setErrors)}
+                                        value={formData.telNo}
+                                    />
+                                </div>
+                                <div className='col-span-1'>
+                                    <label className="label">
                                         <span className="label-text">Phone No.</span>
                                     </label>
                                     <input
-                                        placeholder="Enter your Phone No"
+                                        placeholder="Enter IC No"
                                         className="input input-sm input-bordered w-full"
                                         name="phoneNo"
                                         onChange={handleChange}
@@ -178,66 +173,17 @@ export default function Staff() {
                                     />
                                     <p className='text-xs text-error mt-1 ms-1'>{errors.phoneNo}</p>
                                 </div>
-                                <div className='col-span-1'>
+                                <div className='col-span-2'>
                                     <label className="label">
-                                        <span className="label-text">IC No.</span>
+                                        <span className="label-text">Address</span>
                                     </label>
-                                    <input
-                                        placeholder="Enter your IC No"
-                                        className="input input-sm input-bordered w-full"
-                                        name="icNo"
+                                    <textarea
+                                        placeholder="Enter address"
+                                        className="textarea textarea-bordered w-full"
+                                        name="address"
                                         onChange={handleChange}
-                                        onBlur={(e) => validateNumber(e, setErrors)}
-                                        value={formData.icNo}
+                                        value={formData.email}
                                     />
-                                    <p className='text-xs text-error mt-1 ms-1'>{errors.icNo}</p>
-
-                                </div>
-                                <div className='col-span-1'>
-                                    <label className="label">
-                                        <span className="label-text">Date of Birth</span>
-                                    </label>
-                                    <input
-                                        type="date"
-                                        className="input input-sm input-bordered w-full"
-                                        name="dateOfBirth"
-                                        onChange={handleChange}
-                                        value={formData.dateOfBirth}
-
-                                    />
-                                </div>
-                                <div className='col-span-1'>
-                                    <label className="label">
-                                        <span className="label-text">Join Date</span>
-                                    </label>
-                                    <input
-                                        type="date"
-                                        className="input input-sm input-bordered w-full"
-                                        name="joinDate"
-                                        onChange={handleChange}
-                                        value={formData.joinDate}
-                                    />
-                                </div>
-                                <div className='col-span-1'>
-                                    <label className="label">
-                                        <span className="label-text">Position</span>
-                                    </label>
-                                    <select
-                                        name="position"
-                                        onChange={(e) => {
-                                            handleSelect(e);
-                                            validateSelect(e, setErrors);
-                                        }}
-                                        value={formData.position}
-                                        className="select select-sm w-full">
-                                        <option value="">{"--Please Select--"}</option>
-                                        {roleList.map((obj) => (
-                                            <option key={obj._id} value={obj._id}>
-                                                {obj.position}
-                                            </option>
-                                        ))}
-                                    </select>
-                                    <p className='text-xs text-error mt-1 ms-1'>{errors.position}</p>
                                 </div>
                                 <button className="btn btn-info btn-sm col-span-2 mt-2">{id === "new" ? "Save" : "Update"}</button>
                             </div>
