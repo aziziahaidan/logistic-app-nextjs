@@ -22,7 +22,7 @@ interface Errors {
     phoneNo?: string;
 }
 
-export default function Staff() {
+export default function Rate() {
 
     const params = useParams();
     const id = params.id;

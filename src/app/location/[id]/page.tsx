@@ -10,11 +10,10 @@ import { validateEmpty, validateNumber } from '@/components/Validation';
 
 interface FormData {
     name?: string;
-    email?: string;
     telNo?: string;
     phoneNo?: string;
     address?: string;
-    location?: string;
+    pinpoint?: string;
 }
 
 interface Errors {
@@ -47,7 +46,7 @@ export default function Staff() {
 
         if (isValid) {
             try {
-                const res = await fetch(`/api/company/${id}`, {
+                const res = await fetch(`/api/location/${id}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -86,7 +85,7 @@ export default function Staff() {
         const fetchData = async () => {
 
             try {
-                const res = await fetch(`/api/company/${id}`);
+                const res = await fetch(`/api/location/${id}`);
 
                 if (!res.ok) {
                     toast.error("Something went wrong, Please try again.");
@@ -120,10 +119,10 @@ export default function Staff() {
                     <div className='md:mx-80 card bg-primary-content text-neutral-content shadow-xl p-6'>
                         <form onSubmit={handleSubmit} autoComplete='off'>
                             <div className="grid grid-cols-2 gap-4 px-2">
-                                <p className=" col-span-2 text-2xl text-center ">Company</p>
+                                <p className=" col-span-2 text-2xl text-center ">Location</p>
                                 <div className='col-span-2'>
                                     <label className="label">
-                                        <span className="label-text">Company Name</span>
+                                        <span className="label-text">Location Name</span>
                                     </label>
                                     <input
                                         placeholder="Enter name"
@@ -134,19 +133,6 @@ export default function Staff() {
                                         value={formData.name}
                                     />
                                     <p className='text-xs text-error mt-1 ms-1'>{errors.name}</p>
-                                </div>
-                                <div className='col-span-2'>
-                                    <label className="label">
-                                        <span className="label-text">Email</span>
-                                    </label>
-                                    <input
-                                        placeholder="Enter email"
-                                        className="input input-sm input-bordered w-full"
-                                        name="email"
-                                        onChange={handleChange}
-                                        value={formData.email}
-
-                                    />
                                 </div>
                                 <div className='col-span-1'>
                                     <label className="label">
@@ -186,6 +172,18 @@ export default function Staff() {
                                         rows={4}
                                         onChange={handleChange}
                                         value={formData.address}
+                                    />
+                                </div>
+                                <div className='col-span-2'>
+                                    <label className="label">
+                                        <span className="label-text">Pinpoint</span>
+                                    </label>
+                                    <input
+                                        placeholder="Enter Pinpoint"
+                                        className="input input-sm input-bordered w-full"
+                                        name="pinpoint"
+                                        onChange={handleChange}
+                                        value={formData.pinpoint}
                                     />
                                 </div>
                                 <button className="btn btn-info btn-sm col-span-2 mt-2">{id === "new" ? "Save" : "Update"}</button>

@@ -34,7 +34,7 @@ export default function Company() {
             renderCell: (params: GridCellParams) => (
                 <button
                     className='btn btn-sm btn-neutral'
-                    onClick={() => router.push(`/staff/${params.id}`)}
+                    onClick={() => router.push(`/company/${params.id}`)}
                 >
                     View
                 </button>

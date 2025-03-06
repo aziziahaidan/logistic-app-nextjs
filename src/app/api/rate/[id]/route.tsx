@@ -14,45 +14,43 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
 
     const { id } = params; //deconstruct to put as param
 
-    const companyCollection = await getCollection("company");
-    const company = await companyCollection.findOne({ _id: new ObjectId(id) });
+    const rateCollection = await getCollection("rate");
+    const rate = await rateCollection.findOne({ _id: new ObjectId(id) });
 
-    if (!company) {
-        return Response.json({ message: "Company not found" }, { status: 404 });
+    if (!rate) {
+        return Response.json({ message: "rate not found" }, { status: 404 });
     }
 
-    return Response.json(company);
+    return Response.json(rate);
 
 }
 
 export async function POST(req: Request) {
     try {
-      const { id, ...formData } = await req.json(); // Parse request body
+      const { id, ...formData } = await req.json();
   
-      const companyCollection = await getCollection("company");
-      if (!companyCollection) {
+      const rateCollection = await getCollection("rate");
+      if (!rateCollection) {
         return Response.json({ message: "Database connection failed" }, { status: 500 });
       }
   
-      // Prepare the payload for MongoDB
       const payload = {
         name: formData.name,
-        email: formData.email,
+        address: formData.address,
+        pinpoint: formData.pinpoint,
         telNo:formData.telNo,
         phoneNo: formData.phoneNo,
-        address: formData.address,
-        location: formData.location,
       };
   
       let result;
       if (id !== "new") {
-        const updateResult = await companyCollection.updateOne(
+        const updateResult = await rateCollection.updateOne(
           { _id: new ObjectId(id) },
           { $set: payload }
         );
         result = updateResult;
       } else {
-        const insertResult = await companyCollection.insertOne(payload);
+        const insertResult = await rateCollection.insertOne(payload);
         result = insertResult;
       }
   

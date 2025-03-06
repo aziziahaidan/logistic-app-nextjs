@@ -70,7 +70,11 @@ const StyledDataGrid: React.FC<StyledDataGridProps> = ({ rows, columns }) => {
             columns={columns}
             sx={gridStyles}
             getRowId={(row) => row._id}
-            
+            // getRowHeight={() => 'auto'}
+            // getRowSpacing={(params) => ({
+            //     top: 8,  // Adjust top spacing
+            //     bottom: 8, // Adjust bottom spacing
+            // })}
         />
     );
 };
