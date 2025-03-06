@@ -18,44 +18,36 @@ export default function Rate() {
         {
             field: "no",
             headerName: "No.",
-            flex: 1,
+            width: 60,
             renderCell: (params) => params.api.getAllRowIds().indexOf(params.id) + 1,
         },
-        { field: 'name', headerName: 'Shipment Name', type: 'string', minWidth: 20, flex: 2 },
-        // { field: 'from', headerName: 'From', type: 'string', minWidth: 20, flex: 2 },
+        { field: 'name', headerName: 'Shipment Name', type: 'string', minWidth: 20, flex: 1 },
         {
             field: 'from',
             headerName: 'From',
-            flex: 2,
+            flex: 3,
             renderCell: (params: GridCellParams) => (
-                <>
-                    <p>{params.row?.fromDetail?.name}</p>
-                    <p>{params.row?.fromDetail?.address}</p>
-                </>
+                <p>{`${params.row?.fromDetail?.name} - ${params.row?.fromDetail?.address}`}</p>
             )
         },
         {
             field: 'to',
             headerName: 'To',
-            flex: 2,
+            flex: 3,
             renderCell: (params: GridCellParams) => (
-                <div>
-                    <div>{params.row?.toDetail?.name}</div>
-                    <div>{params.row?.toDetail?.address}</div>
-                </div>
+                <p>{`${params.row?.toDetail?.name} - ${params.row?.toDetail?.address}`}</p>
             )
         },
-        // { field: 'to', headerName: 'To', type: 'string', minWidth: 20, flex: 2 },
-        { field: 'price', headerName: 'Rate (RM)', type: 'string', minWidth: 20, flex: 2 },
+        { field: 'price', headerName: 'Rate (RM)', type: 'string', minWidth: 20, flex: 1 },
 
         {
             field: 'action',
             headerName: 'Action',
-            width: 150,
+            width: 100,
             renderCell: (params: GridCellParams) => (
                 <button
                     className='btn btn-sm btn-neutral'
-                    onClick={() => router.push(`/company/${params.id}`)}
+                    onClick={() => router.push(`/rate/${params.id}`)}
                 >
                     View
                 </button>
@@ -97,7 +89,7 @@ export default function Rate() {
                             className="btn btn-neutral btn-sm"
                             onClick={() => {
                                 setIsLoading(true);
-                                router.push(`/company/new`);
+                                router.push(`/rate/new`);
                             }}
                         >
                             <PlusIcon className="h-4 w-4" />

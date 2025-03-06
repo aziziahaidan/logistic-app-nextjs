@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
 import { validateEmpty, validateNumber } from '@/components/Validation';
+import Select from 'react-select';
 
 interface FormData {
     name?: string;
@@ -47,7 +48,7 @@ export default function Rate() {
 
         if (isValid) {
             try {
-                const res = await fetch(`/api/company/${id}`, {
+                const res = await fetch(`/api/rate/${id}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -86,7 +87,7 @@ export default function Rate() {
         const fetchData = async () => {
 
             try {
-                const res = await fetch(`/api/company/${id}`);
+                const res = await fetch(`/api/rate/${id}`);
 
                 if (!res.ok) {
                     toast.error("Something went wrong, Please try again.");
@@ -119,11 +120,11 @@ export default function Rate() {
                     <BackToListing basePath={basePath} />
                     <div className='md:mx-80 card bg-primary-content text-neutral-content shadow-xl p-6'>
                         <form onSubmit={handleSubmit} autoComplete='off'>
-                            <div className="grid grid-cols-2 gap-4 px-2">
-                                <p className=" col-span-2 text-2xl text-center ">Company</p>
+                            <div className="grid grid-cols-2 gap-2 px-2">
+                                <p className=" col-span-2 text-2xl text-center ">Rate</p>
                                 <div className='col-span-2'>
                                     <label className="label">
-                                        <span className="label-text">Company Name</span>
+                                        <span className="label-text">Shipment Name</span>
                                     </label>
                                     <input
                                         placeholder="Enter name"
@@ -137,16 +138,54 @@ export default function Rate() {
                                 </div>
                                 <div className='col-span-2'>
                                     <label className="label">
-                                        <span className="label-text">Email</span>
+                                        <span className="label-text">From</span>
                                     </label>
-                                    <input
-                                        placeholder="Enter email"
-                                        className="input input-sm input-bordered w-full"
-                                        name="email"
-                                        onChange={handleChange}
-                                        value={formData.email}
 
+                                    <Select
+                                        styles={{
+                                            control: (baseStyles, state) => ({
+                                                ...baseStyles,
+                                                borderColor: state.isFocused ? "oklch(var(--n))" : "oklch(var(--b2))",
+                                                backgroundColor: "oklch(var(--b3))",
+                                                color: "oklch(var(--bc))", 
+
+                                            }),
+                                            singleValue: (base) => ({
+                                                ...base,
+                                                color: "oklch(var(--bc))", //text color
+                                            }),
+                                            input: (base) => ({
+                                                ...base,
+                                                color: "oklch(var(--bc))", //font color on search
+                                            }),
+                                            menu: (base) => ({
+                                                ...base,
+                                                backgroundColor: "oklch(var(--b2))", // whitespace on background
+                                            }),
+                                            option: (base, state) => ({
+                                                ...base,
+                                                backgroundColor: state.isFocused
+                                                    ? "oklch(var(--n))"
+                                                    : "oklch(var(--b2))",
+                                                color: "oklch(var(--bc))",
+                                            }),
+                                        }}
+                                        theme={(theme) => ({
+                                            ...theme,
+                                            borderRadius: 5,
+                                            colors: {
+                                                ...theme.colors,
+                                                primary25: "oklch(var(--n))",
+                                                primary: "oklch(var(--b1))",
+                                            },
+                                        })}
+                                        options={[
+                                            { label: "1", value: "1" },
+                                            { label: "2", value: "2" },
+                                            { label: "3", value: "3" },
+                                        ]}
                                     />
+
                                 </div>
                                 <div className='col-span-1'>
                                     <label className="label">

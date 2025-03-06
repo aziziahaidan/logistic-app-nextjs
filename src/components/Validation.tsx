@@ -2,7 +2,7 @@ const validator = require('validator');
 
 
 export const validateEmpty = (
-    e: React.ChangeEvent<HTMLInputElement>,
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>,
     setErrors: React.Dispatch<React.SetStateAction<Record<string, any>>>
 ) => {
     const { name, value } = e.target;
@@ -37,19 +37,12 @@ export const validateNumber = (
     }
 };
 
-export const validateSelect = (
-    e: React.ChangeEvent<HTMLSelectElement>,
-    setErrors: React.Dispatch<React.SetStateAction<Record<string, any>>>
-) => {
-    const { name, value } = e.target;
+export const validateAll = (arr:string[])=>{
+    arr.forEach(name => {
+        const inputElement = document.querySelector(`[name="${name}"]`);
+        if (inputElement) {
+            inputElement.classList.add("input-error");
+        }
+    });
 
-    let isEmpty = validator.isEmpty(value);
-
-    if (isEmpty) {
-        e.target.classList.add("input-error");
-        setErrors((prevErrors) => ({ ...prevErrors, [name]: `Please select ${[name]}` }));
-    } else {
-        e.target.classList.remove("input-error");
-        setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
-    }
-};
+}

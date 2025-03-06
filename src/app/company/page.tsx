@@ -18,19 +18,19 @@ export default function Company() {
         {
             field: "no",
             headerName: "No.",
-            flex: 1,
+            width: 60,
             renderCell: (params) => params.api.getAllRowIds().indexOf(params.id) + 1,
         },
-        { field: 'name', headerName: 'Name', type: 'string', minWidth: 20, flex: 2 },
-        { field: 'email', headerName: 'Email', type: 'string', minWidth: 20, flex: 2 },
-        { field: 'telNo', headerName: 'Tel No.', type: 'string', minWidth: 20, flex: 2 },
-        { field: 'phoneNo', headerName: 'Phone No.', type: 'string', minWidth: 20, flex: 2 },
-        { field: 'address', headerName: 'Address', type: 'string', minWidth: 20, flex: 2 },
+        { field: 'name', headerName: 'Name', type: 'string', minWidth: 20, flex: 1 },
+        { field: 'email', headerName: 'Email', type: 'string', minWidth: 20, flex: 1 },
+        { field: 'telNo', headerName: 'Tel No.', type: 'string', minWidth: 20, flex: 1 },
+        { field: 'phoneNo', headerName: 'Phone No.', type: 'string', minWidth: 20, flex: 1 },
+        { field: 'address', headerName: 'Address', type: 'string', minWidth: 20, flex: 3 },
    
         {
             field: 'action',
             headerName: 'Action',
-            width: 150,
+            width: 100,
             renderCell: (params: GridCellParams) => (
                 <button
                     className='btn btn-sm btn-neutral'

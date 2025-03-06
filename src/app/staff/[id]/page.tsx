@@ -2,12 +2,12 @@
 'use client';
 import BackToListing from '../../../components/BackToListing';
 import { usePathname, useParams } from 'next/navigation';
-import { ChangeEvent, useState, useEffect } from 'react';
+import { ChangeEvent, useState, useEffect, useRef } from 'react';
 import { getUserById, submitUser, getAllRoles } from '@/actions/auth';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
-import { validateEmpty, validateNumber, validateSelect } from '@/components/Validation';
+import { validateAll, validateEmpty, validateNumber } from '@/components/Validation';
 
 
 interface Role {
@@ -34,7 +34,6 @@ interface Errors {
 
 export default function Staff() {
 
-    const [roleList, setRoleList] = useState<Role[]>([]);
 
     const params = useParams();
     const id = params.id;
@@ -42,12 +41,31 @@ export default function Staff() {
     const basePath = '/' + pathname.split('/')[1];
     const router = useRouter();
 
+    const [roleList, setRoleList] = useState<Role[]>([]);
     const [formData, setFormData] = useState<FormData>({})
     const [errors, setErrors] = useState<Errors>({})
     const [isLoading, setIsLoading] = useState(true);
 
+    const touched = useRef(false);
+
+    const validateForm = () => {
+        toast.warn("Please fill in all required fields.");
+        validateAll(['name', 'phoneNo', 'icNo'])
+        setIsLoading(false)
+    }
+
+    const checkTouched = () => {
+        if (touched.current) return;
+
+        if (Object.keys(formData).length !== 0) {
+            touched.current = true;
+        }
+    }
+
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+        checkTouched();
         setFormData({ ...formData, [e.target.name]: e.target.value })
+
     }
 
     const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -57,10 +75,14 @@ export default function Staff() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         setIsLoading(true);
-        e.preventDefault()
+        e.preventDefault();
+
+        if (!touched.current) {
+            validateForm();
+            return
+        }
 
         const isValid = Object.values(errors).every(value => value === "");
-
         if (isValid) {
 
             const result = await submitUser(formData, String(id));
@@ -146,7 +168,6 @@ export default function Staff() {
                                         name="name"
                                         onChange={handleChange}
                                         onBlur={(e) => validateEmpty(e, setErrors)}
-                                        // onBlur={validateForm}
                                         value={formData.name}
                                     />
                                     <p className='text-xs text-error mt-1 ms-1'>{errors.name}</p>
@@ -226,7 +247,7 @@ export default function Staff() {
                                         name="position"
                                         onChange={(e) => {
                                             handleSelect(e);
-                                            validateSelect(e, setErrors);
+                                            validateEmpty(e, setErrors);
                                         }}
                                         value={formData.position}
                                         className="select select-sm w-full">

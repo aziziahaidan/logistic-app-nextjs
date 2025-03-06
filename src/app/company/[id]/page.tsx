@@ -157,7 +157,7 @@ export default function Staff() {
                                         className="input input-sm input-bordered w-full"
                                         name="telNo"
                                         onChange={handleChange}
-                                        // onBlur={(e) => validateNumber(e, setErrors)}
+                                        onBlur={(e) => validateNumber(e, setErrors)}
                                         value={formData.telNo}
                                     />
                                 </div>

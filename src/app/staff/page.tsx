@@ -18,7 +18,7 @@ export default function Staff() {
         {
             field: "no",
             headerName: "No.",
-            flex: 1,
+            width: 60,
             renderCell: (params) => params.api.getAllRowIds().indexOf(params.id) + 1,
         },
         { field: 'name', headerName: 'Name', type: 'string', minWidth: 20, flex: 2 },
@@ -34,7 +34,7 @@ export default function Staff() {
         {
             field: 'action',
             headerName: 'Action',
-            width: 150,
+            width: 100,
             renderCell: (params: GridCellParams) => (
                 <button
                     className='btn btn-sm btn-neutral'
