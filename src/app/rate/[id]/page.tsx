@@ -7,20 +7,33 @@ import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
 import { validateEmpty, validateNumber } from '@/components/Validation';
-import Select from 'react-select';
+import { SingleValue } from 'react-select';
+import StyledSelect from '@/components/StyledSelect';
+// import { fetchApi } from '@/helper/FetchApi';
+
+interface Location {
+    label: string;
+    value: string;
+}
 
 interface FormData {
     name?: string;
-    email?: string;
-    telNo?: string;
-    phoneNo?: string;
-    address?: string;
-    location?: string;
+    from?: { label: string; value: string }
+    to?: { label: string; value: string }
+    price?: string;
+    capacity?: string
+    remarks?: string
+
 }
 
 interface Errors {
     name?: string;
     phoneNo?: string;
+}
+
+interface Option {
+    value: string;
+    label: string;
 }
 
 export default function Rate() {
@@ -31,12 +44,25 @@ export default function Rate() {
     const basePath = '/' + pathname.split('/')[1];
     const router = useRouter();
 
+    const [locationList, setLocationList] = useState<Location[]>([])
     const [formData, setFormData] = useState<FormData>({})
     const [errors, setErrors] = useState<Errors>({})
     const [isLoading, setIsLoading] = useState(true);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
+    }
+
+    const handleReactSelect = (option: SingleValue<Option>, name: string) => {
+
+        if (name === "to" && formData.from?.value === option?.value) {
+            toast.warn('From and To the same place?')
+        }
+        else if (name === "from" && formData.to?.value === option?.value){
+            toast.warn('From and To the same place?')
+        }
+
+        setFormData({ ...formData, [name]: option })
     }
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -53,7 +79,11 @@ export default function Rate() {
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ ...formData, id: id }),
+                    body: JSON.stringify({
+                        ...formData, id: id,
+                        from: formData?.from?.value,
+                        to: formData?.to?.value
+                    }),
                 });
 
                 if (res.ok) {
@@ -83,32 +113,80 @@ export default function Rate() {
 
     }
 
-    useEffect(() => {
-        const fetchData = async () => {
+    const fetchLocation = async () => {
 
-            try {
-                const res = await fetch(`/api/rate/${id}`);
-
-                if (!res.ok) {
-                    toast.error("Something went wrong, Please try again.");
-                    throw new Error(`Error: ${res.status}`);
-                }
-                const data = await res.json();
-
-                setFormData(data);
-                setIsLoading(false);
-
-            } catch (error) {
+        try {
+            const locationReq = await fetch('/api/location');
+            if (!locationReq.ok) {
                 toast.error("Something went wrong, Please try again.");
             }
+            let location = await locationReq.json();
 
-        };
+            location = location.map((obj: any) => ({
+                // ...obj,
+                label: `${obj.name} - ${obj.address}`,
+                value: obj._id
+            }))
+
+            return location
+        }
+        catch (e) {
+            toast.error('Error fetching location')
+
+        }
+
+
+
+    }
+
+    const fetchData = async () => {
+
+        try {
+            const res = await fetch(`/api/rate/${id}`);
+
+            if (!res.ok) {
+                toast.error("Something went wrong, Please try again.");
+            }
+            let data = await res.json();
+
+
+            const location: Location[] = await fetchLocation();
+
+            data = {
+                ...data,
+                from: data.from ? location.find((x) => x.value === data.from) : "",
+                to: data.to ? location.find((x) => x.value === data.to) : ""
+                // position: data.roleId ? roles.find(x => x._id === data.roleId)?._id : ""
+
+            }
+
+            setLocationList(location)
+            setFormData(data);
+            setIsLoading(false);
+
+        } catch (error) {
+            toast.error("Something went wrong, Please try again.");
+        }
+
+    };
+
+
+    const getLocation = async () => {
+
+        const location: Location[] = await fetchLocation();
+        setLocationList(location)
+        setIsLoading(false);
+    };
+
+
+    useEffect(() => {
+
 
         if (id !== "new") {
             fetchData();
         }
         else {
-            setIsLoading(false);
+            getLocation();
         }
 
     }, [id])
@@ -136,95 +214,65 @@ export default function Rate() {
                                     />
                                     <p className='text-xs text-error mt-1 ms-1'>{errors.name}</p>
                                 </div>
-                                <div className='col-span-2'>
+                                <div className='col-span-1'>
                                     <label className="label">
                                         <span className="label-text">From</span>
                                     </label>
-
-                                    <Select
-                                        styles={{
-                                            control: (baseStyles, state) => ({
-                                                ...baseStyles,
-                                                borderColor: state.isFocused ? "oklch(var(--n))" : "oklch(var(--b2))",
-                                                backgroundColor: "oklch(var(--b3))",
-                                                color: "oklch(var(--bc))", 
-
-                                            }),
-                                            singleValue: (base) => ({
-                                                ...base,
-                                                color: "oklch(var(--bc))", //text color
-                                            }),
-                                            input: (base) => ({
-                                                ...base,
-                                                color: "oklch(var(--bc))", //font color on search
-                                            }),
-                                            menu: (base) => ({
-                                                ...base,
-                                                backgroundColor: "oklch(var(--b2))", // whitespace on background
-                                            }),
-                                            option: (base, state) => ({
-                                                ...base,
-                                                backgroundColor: state.isFocused
-                                                    ? "oklch(var(--n))"
-                                                    : "oklch(var(--b2))",
-                                                color: "oklch(var(--bc))",
-                                            }),
-                                        }}
-                                        theme={(theme) => ({
-                                            ...theme,
-                                            borderRadius: 5,
-                                            colors: {
-                                                ...theme.colors,
-                                                primary25: "oklch(var(--n))",
-                                                primary: "oklch(var(--b1))",
-                                            },
-                                        })}
-                                        options={[
-                                            { label: "1", value: "1" },
-                                            { label: "2", value: "2" },
-                                            { label: "3", value: "3" },
-                                        ]}
-                                    />
-
-                                </div>
-                                <div className='col-span-1'>
-                                    <label className="label">
-                                        <span className="label-text">Tel No.</span>
-                                    </label>
-                                    <input
-                                        placeholder="Enter Phone No"
-                                        className="input input-sm input-bordered w-full"
-                                        name="telNo"
-                                        onChange={handleChange}
-                                        // onBlur={(e) => validateNumber(e, setErrors)}
-                                        value={formData.telNo}
+                                    <StyledSelect
+                                        onChange={handleReactSelect}
+                                        options={locationList}
+                                        name="from"
+                                        val={formData.from || null}
                                     />
                                 </div>
                                 <div className='col-span-1'>
                                     <label className="label">
-                                        <span className="label-text">Phone No.</span>
+                                        <span className="label-text">To</span>
                                     </label>
-                                    <input
-                                        placeholder="Enter IC No"
-                                        className="input input-sm input-bordered w-full"
-                                        name="phoneNo"
-                                        onChange={handleChange}
-                                        onBlur={(e) => validateNumber(e, setErrors)}
-                                        value={formData.phoneNo}
+                                    <StyledSelect
+                                        onChange={handleReactSelect}
+                                        options={locationList}
+                                        name="to"
+                                        val={formData?.to || null}
                                     />
-                                    <p className='text-xs text-error mt-1 ms-1'>{errors.phoneNo}</p>
                                 </div>
                                 <div className='col-span-2'>
                                     <label className="label">
-                                        <span className="label-text">Address</span>
+                                        <span className="label-text">Capacity</span>
                                     </label>
                                     <textarea
-                                        placeholder="Enter address"
+                                        placeholder="Enter Capacity"
                                         className="textarea textarea-bordered textarea-sm w-full"
-                                        name="address"
-                                        rows={4}
+                                        name="capacity"
+                                        rows={2}
                                         onChange={handleChange}
-                                        value={formData.address}
+                                        value={formData.capacity}
+                                    />
+                                </div>
+                                <div className='col-span-2'>
+                                    <label className="label">
+                                        <span className="label-text">Remarks</span>
+                                    </label>
+                                    <textarea
+                                        placeholder="Enter Remarks"
+                                        className="textarea textarea-bordered textarea-sm w-full"
+                                        name="remarks"
+                                        rows={2}
+                                        onChange={handleChange}
+                                        value={formData.remarks}
+                                    />
+                                </div>
+                                <div className='col-span-1'>
+                                    <label className="label">
+                                        <span className="label-text">Standard Rate (RM)</span>
+                                    </label>
+                                    <input
+                                        placeholder="Enter amount"
+                                        className="input input-sm input-bordered w-full"
+                                        name="price"
+                                        onChange={handleChange}
+                                        // onBlur={(e) => validateNumber(e, setErrors)}
+                                        value={formData.price}
                                     />
                                 </div>
                                 <button className="btn btn-info btn-sm col-span-2 mt-2">{id === "new" ? "Save" : "Update"}</button>
@@ -237,7 +285,7 @@ export default function Rate() {
             </div>
             <ToastContainer
                 position="top-right"
-                autoClose={1000}
+                autoClose={2000}
                 hideProgressBar={true}
                 newestOnTop={false}
                 closeOnClick={false}

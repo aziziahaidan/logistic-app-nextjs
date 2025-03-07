@@ -4,29 +4,6 @@ export async function GET() {
   try {
     const rateCollection = await getCollection("rate");
 
-    // let rate = await rateCollection.find().toArray();
-    // let rate = await rateCollection.aggregate([
-    //   {
-    //     $lookup: {
-    //       from: "location",
-    //       localField: "from",
-    //       foreignField: "_id",
-    //       as: "fromDetail"
-    //     }
-    //   },
-    //   { 
-    //     $unwind: { 
-    //       path: "$fromDetail", 
-    //       preserveNullAndEmptyArrays: true 
-    //     } 
-    //   },
-    //   {
-    //     $addFields: {
-    //       role: { $ifNull: ["$fromDetail", {}] } 
-    //     }
-    //   }
-    // ]).toArray();
-
     let rate = await rateCollection.aggregate([
       {
         $lookup: {

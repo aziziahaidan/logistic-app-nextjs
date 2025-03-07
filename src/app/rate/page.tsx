@@ -21,13 +21,16 @@ export default function Rate() {
             width: 60,
             renderCell: (params) => params.api.getAllRowIds().indexOf(params.id) + 1,
         },
-        { field: 'name', headerName: 'Shipment Name', type: 'string', minWidth: 20, flex: 1 },
+        { field: 'name', headerName: 'Shipment Name', type: 'string', minWidth: 20, flex: 2 },
         {
             field: 'from',
             headerName: 'From',
             flex: 3,
             renderCell: (params: GridCellParams) => (
-                <p>{`${params.row?.fromDetail?.name} - ${params.row?.fromDetail?.address}`}</p>
+                <>
+                    <button className='btn btn-sm btn-link'>{params.row?.fromDetail?.name}</button><span>I</span>
+                    <p>{`${params.row?.fromDetail?.name} - ${params.row?.fromDetail?.address}`}</p>
+                </>
             )
         },
         {
@@ -38,7 +41,8 @@ export default function Rate() {
                 <p>{`${params.row?.toDetail?.name} - ${params.row?.toDetail?.address}`}</p>
             )
         },
-        { field: 'price', headerName: 'Rate (RM)', type: 'string', minWidth: 20, flex: 1 },
+        { field: 'capacity', headerName: 'Capacity', type: 'string', minWidth: 20, flex: 3 },
+        { field: 'price', headerName: 'Standard Rate (RM)', type: 'string', minWidth: 20, flex: 1 },
 
         {
             field: 'action',
@@ -68,6 +72,7 @@ export default function Rate() {
                 }
 
                 const data = await res.json();
+                console.log(data)
                 setData(data)
                 setIsLoading(false);
 

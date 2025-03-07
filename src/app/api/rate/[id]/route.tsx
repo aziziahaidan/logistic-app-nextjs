@@ -1,14 +1,6 @@
 import getCollection from "@/lib/db";
 import { ObjectId } from "mongodb";
 
-interface FormData {
-    name?: string;
-    email?: string;
-    telNo?: string;
-    phoneNo?: string;
-    address?: string;
-    location?: string;
-}
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
 
@@ -36,10 +28,11 @@ export async function POST(req: Request) {
   
       const payload = {
         name: formData.name,
-        address: formData.address,
-        pinpoint: formData.pinpoint,
-        telNo:formData.telNo,
-        phoneNo: formData.phoneNo,
+        from: new ObjectId(formData.from),
+        to: new ObjectId(formData.to),
+        price:parseFloat(formData.price),
+        capacity:formData.capacity,
+        remarks:formData?.remarks
       };
   
       let result;
