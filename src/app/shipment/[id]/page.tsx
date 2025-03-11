@@ -9,7 +9,9 @@ import { validateEmpty, validateNumber } from '@/components/Validation';
 import { SingleValue } from 'react-select';
 import StyledSelect from '@/components/StyledSelect';
 import BackButton from '@/components/BackButton';
-// import { fetchApi } from '@/helper/FetchApi';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 
 interface Location {
     label: string;
@@ -36,7 +38,7 @@ interface Option {
     label: string;
 }
 
-export default function Rate() {
+export default function Shipment() {
 
     const params = useParams();
     const id = params.id;
@@ -74,7 +76,7 @@ export default function Rate() {
 
         if (isValid) {
             try {
-                const res = await fetch(`/api/rate/${id}`, {
+                const res = await fetch(`/api/shipment/${id}`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -142,7 +144,7 @@ export default function Rate() {
     const fetchData = async () => {
 
         try {
-            const res = await fetch(`/api/rate/${id}`);
+            const res = await fetch(`/api/shipment/${id}`);
 
             if (!res.ok) {
                 toast.error("Something went wrong, Please try again.");
@@ -199,7 +201,7 @@ export default function Rate() {
                     <div className='md:mx-80 card bg-primary-content text-neutral-content shadow-xl p-6'>
                         <form onSubmit={handleSubmit} autoComplete='off'>
                             <div className="grid grid-cols-2 gap-2 px-2">
-                                <p className=" col-span-2 text-2xl text-center ">Rate</p>
+                                <p className=" col-span-2 text-2xl text-center ">Shipment</p>
                                 <div className='col-span-2'>
                                     <label className="label">
                                         <span className="label-text">Shipment Name</span>
@@ -235,6 +237,11 @@ export default function Rate() {
                                         name="to"
                                         val={formData?.to || null}
                                     />
+                                </div>
+                                <div className="col-span-1">
+                                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                                        <DateTimePicker onChange={(e) => console.log(e)} />
+                                    </LocalizationProvider>
                                 </div>
                                 <div className='col-span-2'>
                                     <label className="label">

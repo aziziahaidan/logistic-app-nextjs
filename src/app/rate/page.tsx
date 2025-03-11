@@ -6,6 +6,9 @@ import { GridColDef, GridCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
+import AnimatedIcon from '@/components/AnimatedIcon';
+// import LocationIcon from "../../icon/Location.json";
+import Pindrop from "../../icon/Pindrop.json";
 
 export default function Rate() {
 
@@ -27,10 +30,21 @@ export default function Rate() {
             headerName: 'From',
             flex: 3,
             renderCell: (params: GridCellParams) => (
-                <>
-                    <button className='btn btn-sm btn-link'>{params.row?.fromDetail?.name}</button><span>I</span>
-                    <p>{`${params.row?.fromDetail?.name} - ${params.row?.fromDetail?.address}`}</p>
-                </>
+                <div className="flex items-center justify-start h-full">
+                    <button className="btn btn-sm btn-link" onClick={() => viewLocation(params.row?.fromDetail?._id)}>
+                        {params.row?.fromDetail?.name}
+                    </button>
+                    <button className="btn btn-sm btn-link flex items-center" onClick={() => openMap(params.row?.fromDetail?.pinpoint)}>
+                        <AnimatedIcon
+                            width="1.5rem"
+                            height="1.5rem"
+                            path={Pindrop}
+                            loop={false}
+                            hover={true}
+                        />
+                    </button>
+                </div>
+
             )
         },
         {
@@ -38,11 +52,24 @@ export default function Rate() {
             headerName: 'To',
             flex: 3,
             renderCell: (params: GridCellParams) => (
-                <p>{`${params.row?.toDetail?.name} - ${params.row?.toDetail?.address}`}</p>
+                <div className="flex items-center justify-start h-full">
+                    <button className="btn btn-sm btn-link" onClick={() => viewLocation(params.row?.toDetail?._id)}>
+                        {params.row?.toDetail?.name}
+                    </button>
+                    <button className="btn btn-sm btn-link flex items-center" onClick={() => openMap(params.row?.toDetail?.pinpoint)}>
+                        <AnimatedIcon
+                            width="1.5rem"
+                            height="1.5rem"
+                            path={Pindrop}
+                            loop={false}
+                            hover={true}
+                        />
+                    </button>
+                </div>
             )
         },
         { field: 'capacity', headerName: 'Capacity', type: 'string', minWidth: 20, flex: 3 },
-        { field: 'price', headerName: 'Standard Rate (RM)', type: 'string', minWidth: 20, flex: 1 },
+        { field: 'price', headerName: 'Rate (RM)', type: 'string', minWidth: 20, flex: 1 },
 
         {
             field: 'action',
@@ -59,6 +86,15 @@ export default function Rate() {
             type: 'actions'
         },
     ];
+
+    const viewLocation = (id: string) => {
+        router.push(`/location/${id}`)
+    }
+
+    const openMap = (link: string) => {
+        window.open(link)
+
+    }
 
     useEffect(() => {
         const fetchData = async () => {

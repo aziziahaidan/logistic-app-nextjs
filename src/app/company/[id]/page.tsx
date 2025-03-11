@@ -1,12 +1,11 @@
 
 'use client';
-import BackToListing from '../../../components/BackToListing';
-import { usePathname, useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { ChangeEvent, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
 import { validateEmpty, validateNumber } from '@/components/Validation';
+import BackButton from '@/components/BackButton';
 
 interface FormData {
     name?: string;
@@ -22,12 +21,10 @@ interface Errors {
     phoneNo?: string;
 }
 
-export default function Staff() {
+export default function Company() {
 
     const params = useParams();
     const id = params.id;
-    const pathname = usePathname();
-    const basePath = '/' + pathname.split('/')[1];
     const router = useRouter();
 
     const [formData, setFormData] = useState<FormData>({})
@@ -58,7 +55,7 @@ export default function Staff() {
                 if (res.ok) {
                     toast.success("Data Successfully Saved!");
                     setTimeout(() => {
-                        router.push(basePath);
+                        router.back()
                     }, 700);
 
                 }
@@ -116,7 +113,7 @@ export default function Staff() {
         <div className="p-4">
             <div className="relative">
                 <div className='p-5 rounded-lg bg-base-300 flex justify-between'>
-                    <BackToListing basePath={basePath} />
+                    <BackButton/>
                     <div className='md:mx-80 card bg-primary-content text-neutral-content shadow-xl p-6'>
                         <form onSubmit={handleSubmit} autoComplete='off'>
                             <div className="grid grid-cols-2 gap-4 px-2">

@@ -1,13 +1,13 @@
 
 'use client';
-import BackToListing from '../../../components/BackToListing';
 import { usePathname, useParams } from 'next/navigation';
 import { ChangeEvent, useState, useEffect, useRef } from 'react';
-import { getUserById, submitUser, getAllRoles } from '@/actions/auth';
+import { submitUser, getAllRoles } from '@/actions/auth';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
 import { validateAll, validateEmpty, validateNumber } from '@/components/Validation';
+import BackButton from '../../../components/BackButton';
 
 
 interface Role {
@@ -153,7 +153,7 @@ export default function Staff() {
         <div className="p-4">
             <div className="relative">
                 <div className='p-5 rounded-lg bg-base-300 flex justify-between'>
-                    <BackToListing basePath={basePath} />
+                    <BackButton />
                     <div className='md:mx-80 card bg-primary-content text-neutral-content shadow-xl p-6'>
                         <form onSubmit={handleSubmit} autoComplete='off'>
                             <div className="grid grid-cols-2 gap-4 px-2">

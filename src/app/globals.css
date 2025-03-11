@@ -24,3 +24,43 @@ body {
 .MuiChartsAxis-line , .MuiChartsAxis-tick , .MuiChartsAxis-tickLabel{
   stroke : white !important;
 }
+
+.MuiOutlinedInput-root {
+  color: white !important;
+  background-color: #333 !important;
+}
+
+/* Change border color */
+.MuiOutlinedInput-notchedOutline {
+  border-color: #90caf9 !important;
+}
+
+/* Change hover & focus border */
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #64b5f6 !important;
+}
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #42a5f5 !important;
+}
+
+/* Change background color of the date picker pop-up */
+.MuiPaper-root {
+  background-color: #1e1e1e !important;
+  color: white !important;
+}
+
+/* Change day text color */
+.MuiPickersDay-root {
+  color: white !important;
+}
+
+/* Selected day styling */
+.MuiPickersDay-root.Mui-selected {
+  background-color: #90caf9 !important;
+  color: black !important;
+}
+
+/* Hover effect on calendar days */
+.MuiPickersDay-root:hover {
+  background-color: #64b5f6 !important;
+}
