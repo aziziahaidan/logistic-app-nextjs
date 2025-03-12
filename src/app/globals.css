@@ -21,8 +21,10 @@ body {
   @apply bg-gray-800;
 }
 
-.MuiChartsAxis-line , .MuiChartsAxis-tick , .MuiChartsAxis-tickLabel{
-  stroke : white !important;
+.MuiChartsAxis-line,
+.MuiChartsAxis-tick,
+.MuiChartsAxis-tickLabel {
+  stroke: white !important;
 }
 
 .MuiOutlinedInput-root {
@@ -30,37 +32,108 @@ body {
   background-color: #333 !important;
 }
 
-/* Change border color */
+
+/* mui datetimepicker */
 .MuiOutlinedInput-notchedOutline {
   border-color: #90caf9 !important;
 }
 
-/* Change hover & focus border */
 .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
   border-color: #64b5f6 !important;
 }
+
 .MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
   border-color: #42a5f5 !important;
 }
 
-/* Change background color of the date picker pop-up */
 .MuiPaper-root {
   background-color: #1e1e1e !important;
   color: white !important;
 }
 
-/* Change day text color */
 .MuiPickersDay-root {
   color: white !important;
 }
 
-/* Selected day styling */
 .MuiPickersDay-root.Mui-selected {
   background-color: #90caf9 !important;
   color: black !important;
 }
 
-/* Hover effect on calendar days */
 .MuiPickersDay-root:hover {
   background-color: #64b5f6 !important;
 }
+
+.MuiSvgIcon-root {
+  color: white;
+}
+
+/* muidatepicker */
+
+/* Dark mode styles for MUI DateTimePicker */
+.MuiOutlinedInput-root {
+  background-color: #1e293b !important;
+  /* Dark background (slate-800) */
+  color: #e2e8f0 !important;
+  /* Text color (gray-300) */
+}
+
+.MuiOutlinedInput-input {
+  color: #e2e8f0 !important;
+  /* Input text color */
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: #64748b !important;
+  /* Border color (gray-500) */
+}
+
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: #94a3b8 !important;
+  /* Hover border color (gray-400) */
+}
+
+.MuiSvgIcon-root {
+  color: #e2e8f0 !important;
+  /* Calendar icon color */
+}
+
+/* Styling for the Date Picker popover */
+.MuiPaper-root {
+  background-color: #1e293b !important;
+  /* Popover background (slate-800) */
+  color: #e2e8f0 !important;
+  /* Text color */
+}
+
+/* Selected date inside the calendar */
+.MuiPickersDay-root.Mui-selected {
+  background-color: #3b82f6 !important;
+  /* Primary blue */
+}
+
+.MuiPickersDay-root.Mui-selected:hover {
+  background-color: #2563eb !important;
+  /* Darker blue on hover */
+}
+
+/* Weekdays in the calendar */
+.MuiDayCalendar-weekDayLabel {
+  color: #e2e8f0 !important;
+  /* Light text for weekdays */
+}
+
+/* Time picker numbers */
+.MuiClockNumber-root {
+  color: #e2e8f0 !important;
+  /* White text for time */
+}
+
+/* Selected time */
+.MuiClockNumber-root.Mui-selected {
+  background-color: #3b82f6 !important;
+  color: white !important;
+}
+
+/* muidatepicker */
+

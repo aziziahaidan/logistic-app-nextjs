@@ -17,7 +17,8 @@ export default function StyledSelect({ onChange, options, name, val }: StyledSel
         styles={{
             control: (baseStyles, state) => ({
                 ...baseStyles,
-                borderColor: state.isFocused ? "oklch(var(--n))" : "oklch(var(--b2))",
+                // borderColor: state.isFocused ? "oklch(var(--n))" : "oklch(var(--n))", //oklch(var(--b2))
+                borderColor: state.isFocused ? "f2f2f2" : "f2f2f2", //oklch(var(--b2))
                 backgroundColor: "oklch(var(--b3))",
                 color: "oklch(var(--bc))",
 

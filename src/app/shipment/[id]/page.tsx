@@ -1,17 +1,17 @@
 
 'use client';
-import { usePathname, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { ChangeEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
-import { validateEmpty, validateNumber } from '@/components/Validation';
 import { SingleValue } from 'react-select';
 import StyledSelect from '@/components/StyledSelect';
 import BackButton from '@/components/BackButton';
 import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment'
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
+import moment, { Moment } from "moment";
 
 interface Location {
     label: string;
@@ -20,11 +20,15 @@ interface Location {
 
 interface FormData {
     name?: string;
+    billedTo?: { label: string; value: string }
+    rate?: { label: string; value: string }
     from?: { label: string; value: string }
     to?: { label: string; value: string }
     price?: string;
     capacity?: string
     remarks?: string
+    pickupDate?: Moment
+    unloadDate?: Moment
 
 }
 
@@ -42,14 +46,14 @@ export default function Shipment() {
 
     const params = useParams();
     const id = params.id;
-    const pathname = usePathname();
-    const basePath = '/' + pathname.split('/')[1];
     const router = useRouter();
 
-    const [locationList, setLocationList] = useState<Location[]>([])
     const [formData, setFormData] = useState<FormData>({})
     const [errors, setErrors] = useState<Errors>({})
     const [isLoading, setIsLoading] = useState(true);
+    const [locationList, setLocationList] = useState<Location[]>([])
+    const [companyList, setCompanyList] = useState([])
+    const [rateList, setRateList] = useState([])
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value })
@@ -67,12 +71,27 @@ export default function Shipment() {
         setFormData({ ...formData, [name]: option })
     }
 
+    // const handleRate = (option: SingleValue<Option>, name: string) => {
+    //     console.log(rateList)
+
+    //     setFormData({
+    //         ...formData, [name]: option,
+    //         // price:"",
+    //         from: data.from ? locationList.find((x: Option) => x.value === option.from) : "",
+    //         to: data.to ? location.find((x: Option) => x.value === data.to) : "",
+
+
+    //     })
+    // }
+
+
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 
         setIsLoading(true);
         e.preventDefault()
 
         const isValid = Object.values(errors).every(value => value === "");
+        console.log(formData.unloadDate ? formData.unloadDate.toDate() : "")
 
         if (isValid) {
             try {
@@ -83,8 +102,12 @@ export default function Shipment() {
                     },
                     body: JSON.stringify({
                         ...formData, id: id,
+                        billedTo:formData?.billedTo?.value,
                         from: formData?.from?.value,
-                        to: formData?.to?.value
+                        to: formData?.to?.value,
+                        pickupDate: formData.pickupDate ? formData.pickupDate.format("YYYY-MM-DDTHH:mm:ssZ") : null,
+                        unloadDate: formData.unloadDate ? formData.unloadDate.format("YYYY-MM-DDTHH:mm:ssZ") : null,
+                        // isPaid:false
                     }),
                 });
 
@@ -125,7 +148,6 @@ export default function Shipment() {
             let location = await locationReq.json();
 
             location = location.map((obj: any) => ({
-                // ...obj,
                 label: `${obj.name} - ${obj.address}`,
                 value: obj._id
             }))
@@ -134,10 +156,54 @@ export default function Shipment() {
         }
         catch (e) {
             toast.error('Error fetching location')
-
         }
 
+    }
 
+
+    const fetchCompany = async () => {
+
+        try {
+            const companyReq = await fetch('/api/company');
+            if (!companyReq.ok) {
+                toast.error("Something went wrong, Please try again.");
+            }
+            let company = await companyReq.json();
+
+            company = company.map((obj: any) => ({
+                label: obj.name,
+                value: obj._id
+            }))
+
+            return company
+        }
+        catch (e) {
+            toast.error('Error fetching company')
+        }
+
+    }
+
+    const fetchRate = async () => {
+
+        try {
+            const rateReq = await fetch('/api/rate');
+            if (!rateReq.ok) {
+                toast.error("Something went wrong, Please try again.");
+            }
+            let rate = await rateReq.json();
+
+            rate = rate.map((obj: any) => ({
+                ...obj,
+                label: obj.name,
+                value: obj._id
+            }))
+            console.log(rate)
+
+            return rate
+        }
+        catch (e) {
+            toast.error('Error fetching rate')
+        }
 
     }
 
@@ -153,15 +219,21 @@ export default function Shipment() {
 
 
             const location: Location[] = await fetchLocation();
+            const company = await fetchCompany();
+            // const rate = await fetchRate();
 
             data = {
                 ...data,
-                from: data.from ? location.find((x) => x.value === data.from) : "",
-                to: data.to ? location.find((x) => x.value === data.to) : ""
-                // position: data.roleId ? roles.find(x => x._id === data.roleId)?._id : ""
+                billedTo: data.billedTo ? company.find((x: Option) => x.value === data.billedTo) : "",
+                // rate: data.rate ? rate.find((x: Option) => x.value === data.rate) : "",
+                from: data.from ? location.find((x: Option) => x.value === data.from) : "",
+                to: data.to ? location.find((x: Option) => x.value === data.to) : "",
+                pickupDate: data.pickupDate ? moment(data.pickupDate, "YYYY-MM-DD HH:mm") : "",
+                unloadDate: data.unloadDate ? moment(data.unloadDate, "YYYY-MM-DD HH:mm") : ""
 
             }
 
+            setCompanyList(company)
             setLocationList(location)
             setFormData(data);
             setIsLoading(false);
@@ -172,6 +244,17 @@ export default function Shipment() {
 
     };
 
+    const getCompany = async () => {
+        const company = await fetchCompany();
+        setCompanyList(company)
+
+    }
+
+    const getRate = async () => {
+        const rate = await fetchRate();
+        setRateList(rate)
+
+    }
 
     const getLocation = async () => {
 
@@ -180,15 +263,26 @@ export default function Shipment() {
         setIsLoading(false);
     };
 
+    const handleDatetime = (value: Moment | null, name: string) => {
+
+        setFormData({
+            ...formData,
+            [name]: value
+        })
+    }
+
 
     useEffect(() => {
 
+
+        getRate();
 
         if (id !== "new") {
             fetchData();
         }
         else {
             getLocation();
+            getCompany();
         }
 
     }, [id])
@@ -204,19 +298,29 @@ export default function Shipment() {
                                 <p className=" col-span-2 text-2xl text-center ">Shipment</p>
                                 <div className='col-span-2'>
                                     <label className="label">
-                                        <span className="label-text">Shipment Name</span>
+                                        <span className="label-text">Billed To</span>
                                     </label>
-                                    <input
-                                        placeholder="Enter name"
-                                        className="input input-sm input-bordered w-full"
-                                        name="name"
-                                        onChange={handleChange}
-                                        onBlur={(e) => validateEmpty(e, setErrors)}
-                                        value={formData.name}
+                                    <StyledSelect
+                                        onChange={handleReactSelect}
+                                        options={companyList}
+                                        name="billedTo"
+                                        val={formData.billedTo || null}
                                     />
                                     <p className='text-xs text-error mt-1 ms-1'>{errors.name}</p>
                                 </div>
-                                <div className='col-span-1'>
+                                {/* <div className='col-span-2'>
+                                    <label className="label">
+                                        <span className="label-text">Template </span>
+                                    </label>
+                                    <StyledSelect
+                                        onChange={handleRate}
+                                        options={rateList}
+                                        name="rate"
+                                        val={formData.rate || null}
+                                    />
+                                    <p className='text-xs text-error mt-1 ms-1'>{errors.name}</p>
+                                </div> */}
+                                <div className='col-span-2'>
                                     <label className="label">
                                         <span className="label-text">From</span>
                                     </label>
@@ -227,7 +331,7 @@ export default function Shipment() {
                                         val={formData.from || null}
                                     />
                                 </div>
-                                <div className='col-span-1'>
+                                <div className='col-span-2'>
                                     <label className="label">
                                         <span className="label-text">To</span>
                                     </label>
@@ -239,8 +343,38 @@ export default function Shipment() {
                                     />
                                 </div>
                                 <div className="col-span-1">
+                                    <label className="label">
+                                        <span className="label-text">Pickup Date and Time</span>
+                                    </label>
                                     <LocalizationProvider dateAdapter={AdapterMoment}>
-                                        <DateTimePicker onChange={(e) => console.log(e)} />
+                                        <DateTimePicker
+                                            format="DD/MM/YYYY hh:mm A"
+                                            value={formData.pickupDate}
+                                            onChange={(value) => { handleDatetime(value, "pickupDate") }}
+                                            slotProps={{
+                                                textField: {
+                                                    size: "small",
+                                                },
+                                            }}
+                                        />
+                                    </LocalizationProvider>
+                                </div>
+                                <div className="col-span-1">
+                                    <label className="label">
+                                        <span className="label-text">Unload Date and Time</span>
+                                    </label>
+                                    <LocalizationProvider dateAdapter={AdapterMoment}>
+                                        <DateTimePicker
+                                            format="DD/MM/YYYY hh:mm A"
+                                            value={formData.unloadDate}
+                                            onChange={(value) => { handleDatetime(value, "unloadDate") }}
+                                            slotProps={{
+                                                textField: {
+                                                    size: "small",
+                                                },
+                                            }}
+
+                                        />
                                     </LocalizationProvider>
                                 </div>
                                 <div className='col-span-2'>

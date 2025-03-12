@@ -7,6 +7,20 @@ export async function GET() {
     let shipment = await shipmentCollection.aggregate([
       {
         $lookup: {
+          from: "company",
+          localField: "billedTo",
+          foreignField: "_id",
+          as: "billedToDetail"
+        }
+      },
+      { 
+        $unwind: { 
+          path: "$billedToDetail", 
+          preserveNullAndEmptyArrays: true 
+        } 
+      },
+      {
+        $lookup: {
           from: "location",
           localField: "from",
           foreignField: "_id",
@@ -36,7 +50,8 @@ export async function GET() {
       {
         $addFields: {
           fromDetail: { $ifNull: ["$fromDetail", {}] }, 
-          toDetail: { $ifNull: ["$toDetail", {}] } 
+          toDetail: { $ifNull: ["$toDetail", {}] } ,
+          billedToDetail: { $ifNull: ["$billedToDetail", {}] } 
         }
       }
     ]).toArray();

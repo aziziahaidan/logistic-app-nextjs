@@ -35,7 +35,6 @@ export async function POST(req: Request) {
         price:parseFloat(formData.price),
         capacity:formData.capacity,
         remarks:formData?.remarks,
-        isPaid:false
       };
   
       let result;

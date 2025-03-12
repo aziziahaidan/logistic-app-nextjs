@@ -24,7 +24,20 @@ export default function Rate() {
             width: 60,
             renderCell: (params) => params.api.getAllRowIds().indexOf(params.id) + 1,
         },
-        { field: 'name', headerName: 'Shipment Name', type: 'string', minWidth: 20, flex: 2 },
+        // { field: 'name', headerName: 'Shipment Name', type: 'string', minWidth: 20, flex: 2 },
+        {
+            field: 'billedTo',
+            headerName: 'Billed To',
+            flex: 3,
+            renderCell: (params: GridCellParams) => (
+                <div className="flex items-center justify-start h-full">
+                    <button className="btn btn-sm btn-link" onClick={() => viewCompany(params.row?.billedToDetail?._id)}>
+                        {params.row?.billedToDetail?.name}
+                    </button>
+
+                </div>
+            )
+        },
         {
             field: 'from',
             headerName: 'From',
@@ -89,6 +102,10 @@ export default function Rate() {
 
     const viewLocation = (id: string) => {
         router.push(`/location/${id}`)
+    }
+
+    const viewCompany = (id: string) => {
+        router.push(`/company/${id}`)
     }
 
     const openMap = (link: string) => {
