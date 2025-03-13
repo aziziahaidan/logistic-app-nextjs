@@ -1,15 +1,6 @@
 import getCollection from "@/lib/db";
 import { ObjectId } from "mongodb";
 
-interface FormData {
-    name?: string;
-    email?: string;
-    telNo?: string;
-    phoneNo?: string;
-    address?: string;
-    location?: string;
-}
-
 export async function GET(req: Request, { params }: { params: { id: string } }) {
 
     const { id } = params; //deconstruct to put as param

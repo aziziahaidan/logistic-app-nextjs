@@ -60,6 +60,7 @@ export default function Company() {
 
             } catch (error) {
                 toast.error('Error, please try again');
+                console.log(error)
 
             }
 

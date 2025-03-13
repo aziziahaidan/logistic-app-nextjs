@@ -67,7 +67,6 @@ export default function Company() {
                 return await res.json();
             } catch (error) {
                 toast.error("Something went wrong, Please try again.");
-                console.error("Failed to submit user:", error);
                 return null;
             }
 
@@ -96,6 +95,7 @@ export default function Company() {
 
             } catch (error) {
                 toast.error("Something went wrong, Please try again.");
+                console.log(error)
             }
 
         };

@@ -4,7 +4,7 @@ export async function GET() {
   try {
     const usersCollection = await getCollection("users");
 
-    let users = await usersCollection.aggregate([
+    const users = await usersCollection.aggregate([
       {
         $lookup: {
           from: "roles",

@@ -13,7 +13,7 @@ export async function GET(req: Request) {
 
     const shipmentCollection = await getCollection("shipment");
 
-    let filter: any = {};
+    const filter: any = {};
     
     if (isPaid !== null) {
       filter.isPaid = isPaid === "true"; 
@@ -29,7 +29,7 @@ export async function GET(req: Request) {
       if (dateTo) filter.pickupDate.$lte = new Date(dateTo);
     }
 
-    let shipment = await shipmentCollection.aggregate([
+    const shipment = await shipmentCollection.aggregate([
       { $match: filter }, 
       {
         $lookup: {

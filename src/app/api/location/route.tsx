@@ -4,7 +4,7 @@ export async function GET() {
   try {
     const locationCollection = await getCollection("location");
 
-    let location = await locationCollection.find().toArray();
+    const location = await locationCollection.find().toArray();
     return Response.json(location);
   } catch (error) {
     console.error(error);
