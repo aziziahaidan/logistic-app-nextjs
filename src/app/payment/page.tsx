@@ -13,7 +13,7 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { SingleValue } from 'react-select';
 import Pindrop from "../../icon/Pindrop.json";
 import StyledSelect from '@/components/StyledSelect';
-import { Moment } from "moment";
+import moment, { Moment } from "moment";
 
 export default function Payment() {
 
@@ -33,10 +33,12 @@ export default function Payment() {
     }
 
     interface Filter {
-        billedTo?: { label: string; value: string }
-        paymentStatus?: { label: string; value: string }
-
+        dateFrom?: Date | null;
+        dateTo?: Date | null;
+        companyId?: { label: string; value: string } | null;
+        paymentStatus?: { label: string; value: string } | null;
     }
+
 
     const router = useRouter();
 
@@ -44,10 +46,11 @@ export default function Payment() {
     const [isLoading, setIsLoading] = useState(true)
     const [companyList, setCompanyList] = useState([])
     const [filter, setFilter] = useState<Filter>({
-        billedTo: { label: "All", value: "" },
+        companyId: { label: "All", value: "" },
         paymentStatus: { label: "All", value: "" },
-
-    })
+        dateFrom: null,
+        dateTo: null,
+    });
     const [paymentStatusList] = useState([
         { label: "All", value: "" },
         { label: "Paid", value: "true" },
@@ -61,24 +64,18 @@ export default function Payment() {
             width: 60,
             renderCell: (params) => params.api.getAllRowIds().indexOf(params.id) + 1,
         },
-        // { field: 'name', headerName: 'Shipment Name', type: 'string', minWidth: 20, flex: 2 },
         {
             field: 'billedTo',
             headerName: 'Billed To',
-            flex: 3,
+            flex: 1,
             renderCell: (params: GridCellParams) => (
-                <div className="flex items-center justify-start h-full">
-                    <button className="btn btn-sm btn-link" onClick={() => viewCompany(params.row?.billedToDetail?._id)}>
-                        {params.row?.billedToDetail?.name}
-                    </button>
-
-                </div>
+                <p>{params.row?.billedToDetail?.name}</p>
             )
         },
         {
             field: 'from',
             headerName: 'From',
-            flex: 3,
+            flex: 2,
             renderCell: (params: GridCellParams) => (
                 <div className="flex items-center justify-start h-full">
                     <button className="btn btn-sm btn-link" onClick={() => viewLocation(params.row?.fromDetail?._id)}>
@@ -100,7 +97,7 @@ export default function Payment() {
         {
             field: 'to',
             headerName: 'To',
-            flex: 3,
+            flex: 2,
             renderCell: (params: GridCellParams) => (
                 <div className="flex items-center justify-start h-full">
                     <button className="btn btn-sm btn-link" onClick={() => viewLocation(params.row?.toDetail?._id)}>
@@ -118,8 +115,39 @@ export default function Payment() {
                 </div>
             )
         },
-        { field: 'capacity', headerName: 'Capacity', type: 'string', minWidth: 20, flex: 3 },
+        { field: 'capacity', headerName: 'Capacity', type: 'string', minWidth: 20, flex: 2 },
+        {
+            field: 'pickupDate',
+            headerName: 'Date',
+            flex: 1,
+            renderCell: (params: GridCellParams) => (
+                <p>
+                    {params.row?.pickupDate ? moment(new Date(params.row?.pickupDate)).format('DD-MM-YYYY') : ""}
+                </p>
+                // <div className="flex items-center justify-start h-full">
+                //     <span className={`badge p-3 m-3 ${params.row?.isPaid ? "badge-info" : "badge-error"}`}>
+                //         {params.row?.isPaid ? "Paid" : "Not Paid"}
+                //     </span>
+
+
+                // </div>
+            )
+        },
         { field: 'price', headerName: 'Rate (RM)', type: 'string', minWidth: 20, flex: 1 },
+        {
+            field: 'isPaid',
+            headerName: 'Payment Status',
+            flex: 1,
+            renderCell: (params: GridCellParams) => (
+                <div className="flex items-center justify-start h-full">
+                    <span className={`badge p-3 m-3 ${params.row?.isPaid ? "badge-info" : "badge-error"}`}>
+                        {params.row?.isPaid ? "Paid" : "Not Paid"}
+                    </span>
+
+
+                </div>
+            )
+        },
     ];
 
     const viewLocation = (id: string) => {
@@ -137,7 +165,8 @@ export default function Payment() {
 
     const getCompany = async () => {
         const company = await fetchCompany();
-        setCompanyList(company)
+        let tempArr: any = [{ label: "All", value: "" }, ...company]
+        setCompanyList(tempArr)
 
     }
 
@@ -170,32 +199,56 @@ export default function Payment() {
 
     }
 
-    useEffect(()=>{
-        console.log("inside filter useeffect")
-
-                // searchTimeout.current = setTimeout(() => {
-        //     search(user?.value !== undefined ? user.value : "", uploadDate !== '' ? moment(uploadDate).format("YYYY-MM-DD") : '')
-        //   }, 500)
-    },[filter])
+    const search = async () => {
 
 
-    
-//   React.useEffect(() => {
-//     if (!!searchTimeout.current) {
-//       clearTimeout(searchTimeout.current)
-//       searchTimeout.current = null
-//     }
+        setIsLoading(true);
+        const params = new URLSearchParams();
 
-//     const length = keyword?.length || 0
+        if (filter.companyId?.value) {
+            params.append("companyId", filter.companyId.value);
+        }
 
-//     if (length >= 3) {
-//       searchTimeout.current = setTimeout(() => {
-//         search(user?.value !== undefined ? user.value : "", uploadDate !== '' ? moment(uploadDate).format("YYYY-MM-DD") : '')
-//       }, 500)
-//     } else {
-//       setResources([])
-//     }
-//   }, [keyword])
+        if (filter.paymentStatus?.value) {
+            params.append("isPaid", filter.paymentStatus.value);
+        }
+
+        if (filter.dateFrom) {
+            params.append("dateFrom", moment(filter.dateFrom).format('YYYY-MM-DD'));
+        }
+
+        if (filter.dateTo) {
+            params.append("dateTo", moment(filter.dateTo).format('YYYY-MM-DD'));
+        }
+
+        let url = "/api/payment" + (params.toString() ? `?${params.toString()}` : "");
+
+        const res = await fetch(url);
+
+        if (!res.ok) {
+            toast.error('Error, please try again');
+            throw new Error(`HTTP error! Status: ${res.status}`);
+        }
+
+        const data = await res.json();
+        setData(data)
+        setIsLoading(false);
+
+    }
+
+    useEffect(() => {
+
+        search();
+
+        // const timeout = setTimeout(() => {
+        //     search();
+        // }, 300);
+
+        // return () => {
+        //     clearTimeout(timeout);
+        // };
+    }, [filter]);
+
 
     const handleDatetime = (value: Moment | null, name: string) => {
 
@@ -211,7 +264,8 @@ export default function Payment() {
             getCompany()
 
             try {
-                // const res = await fetch("/api/payment?companyId=67c804c6de9e834657114d39&isPaid=false");
+                // const res = await fetch("/api/payment?companyId=67c804c6de9e834657114d39&isPaid=true");
+                // const res = await fetch("/api/payment?isPaid=false");
                 const res = await fetch("/api/payment");
 
                 if (!res.ok) {
@@ -221,7 +275,6 @@ export default function Payment() {
 
 
                 const data = await res.json();
-                console.log(data)
                 setData(data)
                 setIsLoading(false);
 
@@ -238,64 +291,50 @@ export default function Payment() {
         <div className="p-4">
             <div className="relative">
                 <div className="p-5 rounded-lg bg-primary-content">
-                    <div className="grid grid-cols-3 w-full max-w-2xl rounded-lg flex justify-between">
-                        <div className='mt-3'>Shipment Date :</div>
-                        <div className='col-span-2'>
+
+                    <div className="flex flex-col w-full max-w-2xl p-4 rounded-lg">
+                        {/* Shipment Date */}
+                        <div className="flex items-center gap-4 mb-3">
+                            <span className="w-1/3">Shipment Date:</span>
                             <LocalizationProvider dateAdapter={AdapterMoment}>
-                                <div className='flex justify-between'>
-                                    <div className='mr-2'>
-                                        <DatePicker
-                                            format="DD/MM/YYYY"
-                                            label="From"
-                                            // value={formData.pickupDate}
-                                            onChange={(value) => { handleDatetime(value, "fromDate") }}
-                                            slotProps={{
-                                                textField: {
-                                                    size: "small",
-                                                    sx: sxStyling
-                                                }
-                                            }}
-                                        />
-                                    </div>
-                                    <div className=''>
-                                        <DatePicker
-                                            format="DD/MM/YYYY"
-                                            label="To"
-                                            // value={formData.pickupDate}
-                                            onChange={(value) => { handleDatetime(value, "toDate") }}
-                                            slotProps={{
-                                                textField: {
-                                                    size: "small",
-                                                    sx: sxStyling
-                                                }
-                                            }}
-                                        />
-                                    </div>
+                                <div className="flex gap-2 w-2/3">
+                                    <DatePicker
+                                        format="DD/MM/YYYY"
+                                        label="From"
+                                        onChange={(value) => handleDatetime(value, "dateFrom")}
+                                        slotProps={{ textField: { size: "small", sx: sxStyling } }}
+                                    />
+                                    <DatePicker
+                                        format="DD/MM/YYYY"
+                                        label="To"
+                                        onChange={(value) => handleDatetime(value, "dateTo")}
+                                        slotProps={{ textField: { size: "small", sx: sxStyling } }}
+                                    />
                                 </div>
                             </LocalizationProvider>
                         </div>
-                        <div className='mt-3'>Company :</div>
-                        <div className='col-span-1 mt-3'>
-                            <StyledSelect
-                                onChange={handleReactSelect}
-                                options={companyList}
-                                name="billedTo"
-                                val={filter.billedTo || null}
-                            />
+                        <div className="flex items-center gap-4 mb-3">
+                            <span className="w-1/3">Company:</span>
+                            <div className="w-2/3">
+                                <StyledSelect
+                                    onChange={handleReactSelect}
+                                    options={companyList}
+                                    name="companyId"
+                                    val={filter.companyId || null}
+                                />
+                            </div>
                         </div>
-                        <div className='col-span-1'></div>
-
-                        <div className='mt-3'>Payment Status :</div>
-                        <div className='col-span-1 mt-2'>
-                            <StyledSelect
-                                onChange={handleReactSelect}
-                                options={paymentStatusList}
-                                name="paymentStatus"
-                                val={filter.paymentStatus || null}
-                            />
+                        <div className="flex items-center gap-4">
+                            <span className="w-1/3">Payment Status:</span>
+                            <div className="w-2/3">
+                                <StyledSelect
+                                    onChange={handleReactSelect}
+                                    options={paymentStatusList}
+                                    name="paymentStatus"
+                                    val={filter.paymentStatus || null}
+                                />
+                            </div>
                         </div>
-                        <div className='col-span-1'></div>
-
                     </div>
                     <StyledDataGrid rows={data} columns={columns} />
                 </div>

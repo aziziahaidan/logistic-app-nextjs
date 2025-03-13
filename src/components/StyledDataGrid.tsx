@@ -62,6 +62,13 @@ const StyledDataGrid: React.FC<StyledDataGridProps> = ({ rows, columns }) => {
 
     };
 
+
+    // const [selectedRows, setSelectedRows] = useState<string[]>([]);
+    // const handleRowSelection = (selectionModel: any) => {
+    //     setSelectedRows(selectionModel); // selectionModel contains the selected row IDs
+    //     console.log("Selected Row IDs:", selectionModel);
+    // };
+
     return (
         <DataGrid
             className='pt-3'
@@ -71,6 +78,8 @@ const StyledDataGrid: React.FC<StyledDataGridProps> = ({ rows, columns }) => {
             sx={gridStyles}
             getRowId={(row) => row._id}
             disableRowSelectionOnClick
+            checkboxSelection
+            // onRowSelectionModelChange={handleRowSelection}
             // getRowHeight={() => 'auto'}
             // getRowSpacing={(params) => ({
             //     top: 8,  // Adjust top spacing

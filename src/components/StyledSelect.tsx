@@ -51,7 +51,7 @@ export default function StyledSelect({ onChange, options, name, val }: StyledSel
                 primary25: "oklch(var(--n))",
                 primary: "oklch(var(--b1))",
             },
-        })}
+        })} 
         name={name}
         onChange={(option) => onChange(option, name)}
         options={options}

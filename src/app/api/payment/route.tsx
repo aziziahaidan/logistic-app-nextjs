@@ -5,25 +5,31 @@ export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
 
-    // Get query params
     const isPaid = searchParams.get("isPaid");
     const companyId = searchParams.get("companyId");
+    const dateFrom = searchParams.get("dateFrom");
+    const dateTo = searchParams.get("dateTo");
 
     const shipmentCollection = await getCollection("shipment");
 
-    // Build dynamic filter
     let filter: any = {};
+    
     if (isPaid !== null) {
-      filter.isPaid = isPaid === "true"; // Convert string to boolean
+      filter.isPaid = isPaid === "true"; 
     }
+    
     if (companyId) {
-      filter.billedTo = new ObjectId(companyId); // Convert to ObjectId
-
+      filter.billedTo = new ObjectId(companyId); 
     }
 
-    // Aggregation Pipeline
+    if (dateFrom || dateTo) {
+      filter.pickupDate = {};
+      if (dateFrom) filter.pickupDate.$gte = new Date(dateFrom);
+      if (dateTo) filter.pickupDate.$lte = new Date(dateTo);
+    }
+
     let shipment = await shipmentCollection.aggregate([
-      { $match: filter }, // Apply dynamic filters
+      { $match: filter }, 
       {
         $lookup: {
           from: "company",
