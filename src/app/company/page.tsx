@@ -1,11 +1,11 @@
 "use client";
 import { PlusIcon } from '@heroicons/react/24/outline';
-import StyledDataGrid from '../../components/StyledDataGrid';
 import { useRouter } from 'next/navigation';
-import { GridColDef, GridCellParams } from '@mui/x-data-grid';
+import { GridColDef, GridCellParams, DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
+import { gridStyles } from '@/components/DataGridStyle';
 
 export default function Company() {
 
@@ -26,7 +26,7 @@ export default function Company() {
         { field: 'telNo', headerName: 'Tel No.', type: 'string', minWidth: 20, flex: 1 },
         { field: 'phoneNo', headerName: 'Phone No.', type: 'string', minWidth: 20, flex: 1 },
         { field: 'address', headerName: 'Address', type: 'string', minWidth: 20, flex: 3 },
-   
+
         {
             field: 'action',
             headerName: 'Action',
@@ -83,7 +83,15 @@ export default function Company() {
                             ADD
                         </button>
                     </div>
-                    <StyledDataGrid rows={data} columns={columns} />
+                    <DataGrid
+                        className='pt-3'
+                        slots={{ toolbar: GridToolbar }}
+                        rows={data}
+                        columns={columns}
+                        sx={gridStyles}
+                        getRowId={(row) => row._id}
+                        disableRowSelectionOnClick
+                    />
                 </div>
                 <LoadingOverlay isLoading={isLoading} />
             </div>

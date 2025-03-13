@@ -58,8 +58,6 @@ const StyledDataGrid: React.FC<StyledDataGridProps> = ({ rows, columns }) => {
         '& .MuiSvgIcon-fontSizeInherit': {
             color: '#fff'
         },
-        
-
     };
 
 

@@ -1,8 +1,8 @@
 "use client";
 import { PlusIcon } from '@heroicons/react/24/outline';
-import StyledDataGrid from '../../components/StyledDataGrid';
 import { useRouter } from 'next/navigation';
-import { GridColDef, GridCellParams } from '@mui/x-data-grid';
+import { gridStyles } from '@/components/DataGridStyle';
+import { GridColDef, GridCellParams, DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
@@ -137,7 +137,15 @@ export default function Rate() {
                             ADD
                         </button>
                     </div>
-                    <StyledDataGrid rows={data} columns={columns} />
+                    <DataGrid
+                        className='pt-3'
+                        slots={{ toolbar: GridToolbar }}
+                        rows={data}
+                        columns={columns}
+                        sx={gridStyles}
+                        getRowId={(row) => row._id}
+                        disableRowSelectionOnClick
+                    />
                 </div>
                 <LoadingOverlay isLoading={isLoading} />
             </div>

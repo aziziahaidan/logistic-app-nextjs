@@ -1,11 +1,14 @@
 "use client";
 import { PlusIcon } from '@heroicons/react/24/outline';
-import StyledDataGrid from '../../components/StyledDataGrid';
+import { GridColDef, GridCellParams, DataGrid, GridToolbar } from '@mui/x-data-grid';
 import { useRouter } from 'next/navigation';
-import { GridColDef, GridCellParams } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
 import LoadingOverlay from '../../components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
+import { gridStyles } from '@/components/DataGridStyle';
+import AnimatedIcon from '@/components/AnimatedIcon';
+import Pindrop from "../../icon/Pindrop.json";
+
 
 export default function Location() {
 
@@ -24,8 +27,26 @@ export default function Location() {
         { field: 'name', headerName: 'Name', type: 'string', minWidth: 20, flex: 1 },
         { field: 'telNo', headerName: 'Tel No.', type: 'string', minWidth: 20, flex: 1 },
         { field: 'phoneNo', headerName: 'Phone No.', type: 'string', minWidth: 20, flex: 1 },
-        { field: 'address', headerName: 'Address', type: 'string', minWidth: 20, flex: 3 },
-   
+        // { field: 'address', headerName: 'Address', type: 'string', minWidth: 20, flex: 3 },
+        {
+            field: 'to',
+            headerName: 'Address',
+            flex: 3,
+            renderCell: (params: GridCellParams) => (
+                <div className="flex items-center justify-start h-full">
+                    <button className="btn btn-sm btn-link flex items-center" onClick={() => openMap(params.row?.pinpoint)}>
+                        <AnimatedIcon
+                            width="1.5rem"
+                            height="1.5rem"
+                            path={Pindrop}
+                            loop={false}
+                            hover={true}
+                        />
+                    </button>
+                    <p>{params.row?.address}</p>
+                </div>
+            )
+        },
         {
             field: 'action',
             headerName: 'Action',
@@ -41,6 +62,10 @@ export default function Location() {
             type: 'actions'
         },
     ];
+
+    const openMap = (link: string) => {
+        window.open(link)
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -82,7 +107,15 @@ export default function Location() {
                             ADD
                         </button>
                     </div>
-                    <StyledDataGrid rows={data} columns={columns} />
+                    <DataGrid
+                        className='pt-3'
+                        slots={{ toolbar: GridToolbar }}
+                        rows={data}
+                        columns={columns}
+                        sx={gridStyles}
+                        getRowId={(row) => row._id}
+                        disableRowSelectionOnClick
+                    />
                 </div>
                 <LoadingOverlay isLoading={isLoading} />
             </div>

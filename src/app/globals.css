@@ -70,66 +70,48 @@ body {
 
 /* muidatepicker */
 
-/* Dark mode styles for MUI DateTimePicker */
 .MuiOutlinedInput-root {
   background-color: #1e293b !important;
-  /* Dark background (slate-800) */
   color: #e2e8f0 !important;
-  /* Text color (gray-300) */
 }
 
 .MuiOutlinedInput-input {
   color: #e2e8f0 !important;
-  /* Input text color */
 }
 
 .MuiOutlinedInput-notchedOutline {
   border-color: #64748b !important;
-  /* Border color (gray-500) */
 }
 
 .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
   border-color: #94a3b8 !important;
-  /* Hover border color (gray-400) */
 }
 
 .MuiSvgIcon-root {
   color: #e2e8f0 !important;
-  /* Calendar icon color */
 }
 
-/* Styling for the Date Picker popover */
 .MuiPaper-root {
   background-color: #1e293b !important;
-  /* Popover background (slate-800) */
   color: #e2e8f0 !important;
-  /* Text color */
 }
 
-/* Selected date inside the calendar */
 .MuiPickersDay-root.Mui-selected {
   background-color: #3b82f6 !important;
-  /* Primary blue */
 }
 
 .MuiPickersDay-root.Mui-selected:hover {
   background-color: #2563eb !important;
-  /* Darker blue on hover */
 }
 
-/* Weekdays in the calendar */
 .MuiDayCalendar-weekDayLabel {
   color: #e2e8f0 !important;
-  /* Light text for weekdays */
 }
 
-/* Time picker numbers */
 .MuiClockNumber-root {
   color: #e2e8f0 !important;
-  /* White text for time */
 }
 
-/* Selected time */
 .MuiClockNumber-root.Mui-selected {
   background-color: #3b82f6 !important;
   color: white !important;

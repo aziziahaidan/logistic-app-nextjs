@@ -1,5 +1,6 @@
 import getCollection from "@/lib/db";
 import { ObjectId } from "mongodb";
+import { NextResponse } from "next/server";
 
 export async function GET(req: Request) {
   try {
@@ -85,5 +86,33 @@ export async function GET(req: Request) {
   } catch (error) {
     console.error(error);
     return Response.json({ message: "Error fetching shipments" }, { status: 500 });
+  }
+}
+
+
+export async function POST(req: Request) {
+  try {
+    const { ids } = await req.json(); 
+
+    if(ids.length < 1){
+        return NextResponse.json({ error: " empty ID array" }, { status: 400 });
+    }
+
+    const shipmentCollection = await getCollection("shipment");
+
+    const objectIds = ids.map((id:any) => new ObjectId(id));
+
+    const result = await shipmentCollection.updateMany(
+      { _id: { $in: objectIds } },
+      { $set: { isPaid: true } }
+    );
+
+    return NextResponse.json({
+      message: `${result.modifiedCount} shipments updated to paid.`,
+      updatedCount: result.modifiedCount,
+    });
+  } catch (error) {
+    console.error("Error updating payments:", error);
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }
