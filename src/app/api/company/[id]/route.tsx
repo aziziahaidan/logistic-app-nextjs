@@ -1,6 +1,6 @@
 import getCollection from "@/lib/db";
 import { ObjectId } from "mongodb";
-
+import { NextResponse } from 'next/server';
 export async function GET(req: Request, { params }: { params: { id: string } }) {
 
   const { id } = params; //deconstruct to put as param
@@ -9,10 +9,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
   const company = await companyCollection.findOne({ _id: new ObjectId(id) });
 
   if (!company) {
-    return Response.json({ message: "Company not found" }, { status: 404 });
+    return NextResponse.json({ message: "Company not found" }, { status: 404 });
   }
 
-  return Response.json(company);
+  return NextResponse.json(company);
 
 }
 
@@ -22,7 +22,7 @@ export async function POST(req: Request) {
 
     const companyCollection = await getCollection("company");
     if (!companyCollection) {
-      return Response.json({ message: "Database connection failed" }, { status: 500 });
+      return NextResponse.json({ message: "Database connection failed" }, { status: 500 });
     }
 
     const payload = {
@@ -47,15 +47,15 @@ export async function POST(req: Request) {
     }
 
     if (result.acknowledged) {
-      return Response.json({
+      return NextResponse.json({
         message: id && id !== "new" ? "User updated successfully" : "User added successfully",
         data: result,
       });
     } else {
-      return Response.json({ message: "Operation failed" }, { status: 500 });
+      return NextResponse.json({ message: "Operation failed" }, { status: 500 });
     }
   } catch (error) {
     console.error("Error in POST /api/users:", error);
-    return Response.json({ message: "Internal server error" }, { status: 500 });
+    return NextResponse.json({ message: "Internal server error" }, { status: 500 });
   }
 }

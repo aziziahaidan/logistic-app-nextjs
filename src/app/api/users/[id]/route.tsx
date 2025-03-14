@@ -1,5 +1,6 @@
 import getCollection from "@/lib/db";
 import { ObjectId } from "mongodb";
+import { NextResponse } from 'next/server';
 
 export async function GET(req: Request, { params }: { params: { id: string } }) {
 
@@ -9,9 +10,9 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     const user = await usersCollection.findOne({ _id: new ObjectId(id) });
 
     if (!user) {
-        return Response.json({ message: "User not found" }, { status: 404 });
+        return NextResponse.json({ message: "User not found" }, { status: 404 });
     }
 
-    return Response.json(user);
+    return NextResponse.json(user);
 
 }

@@ -1,4 +1,5 @@
 import getCollection from "@/lib/db";
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -43,9 +44,9 @@ export async function GET() {
 
 
 
-    return Response.json(rate);
+    return NextResponse.json(rate);
   } catch (error) {
     console.error(error);
-    return Response.json({ message: "Error fetching users" }, { status: 500 });
+    return NextResponse.json({ message: "Error fetching users" }, { status: 500 });
   }
 }
