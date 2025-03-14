@@ -1,5 +1,5 @@
 "use client";
-import { SignInButton, SignUpButton, SignedOut } from "@clerk/nextjs";
+import { SignInButton, SignedOut } from "@clerk/nextjs";
 import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from 'next/navigation';
@@ -24,9 +24,11 @@ export default function Home() {
             <button className="btn btn-primary">Sign In</button>
           </SignInButton>
           <div className="mt-4">
-            <SignUpButton>
+
+            {/* <Waitlist /> */}
+            {/* <SignUpButton>
               <button className="btn btn-accent">Sign Up</button>
-            </SignUpButton>
+            </SignUpButton> */}
           </div>
         </div>
 

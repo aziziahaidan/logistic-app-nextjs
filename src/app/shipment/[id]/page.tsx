@@ -183,29 +183,29 @@ export default function Shipment() {
 
     }
 
-    const fetchRate = async () => {
+    // const fetchRate = async () => {
 
-        try {
-            const rateReq = await fetch('/api/rate');
-            if (!rateReq.ok) {
-                toast.error("Something went wrong, Please try again.");
-            }
-            let rate = await rateReq.json();
+    //     try {
+    //         const rateReq = await fetch('/api/rate');
+    //         if (!rateReq.ok) {
+    //             toast.error("Something went wrong, Please try again.");
+    //         }
+    //         let rate = await rateReq.json();
 
-            rate = rate.map((obj: any) => ({
-                ...obj,
-                label: obj.name,
-                value: obj._id
-            }))
-            console.log(rate)
+    //         rate = rate.map((obj: any) => ({
+    //             ...obj,
+    //             label: obj.name,
+    //             value: obj._id
+    //         }))
+    //         console.log(rate)
 
-            return rate
-        }
-        catch (e) {
-            toast.error('Error fetching rate')
-        }
+    //         return rate
+    //     }
+    //     catch (e) {
+    //         toast.error('Error fetching rate')
+    //     }
 
-    }
+    // }
 
     const fetchData = async () => {
 
@@ -250,11 +250,11 @@ export default function Shipment() {
 
     }
 
-    const getRate = async () => {
-        const rate = await fetchRate();
-        setRateList(rate)
+    // const getRate = async () => {
+    //     const rate = await fetchRate();
+    //     setRateList(rate)
 
-    }
+    // }
 
     const getLocation = async () => {
 
@@ -275,7 +275,7 @@ export default function Shipment() {
     useEffect(() => {
 
 
-        getRate();
+        // getRate();
 
         if (id !== "new") {
             fetchData();

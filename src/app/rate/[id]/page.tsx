@@ -1,11 +1,11 @@
 
 'use client';
-import { usePathname, useParams } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { ChangeEvent, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import LoadingOverlay from '@/components/LoadingOverlay';
 import { ToastContainer, toast } from 'react-toastify';
-import { validateEmpty, validateNumber } from '@/components/Validation';
+import { validateEmpty } from '@/components/Validation';
 import { SingleValue } from 'react-select';
 import StyledSelect from '@/components/StyledSelect';
 import BackButton from '@/components/BackButton';
@@ -40,8 +40,6 @@ export default function Rate() {
 
     const params = useParams();
     const id = params.id;
-    const pathname = usePathname();
-    const basePath = '/' + pathname.split('/')[1];
     const router = useRouter();
 
     const [locationList, setLocationList] = useState<Location[]>([])
@@ -131,7 +129,8 @@ export default function Rate() {
             return location
         }
         catch (e) {
-            toast.error('Error fetching location')
+            toast.error('Error fetching location');
+            console.log(e)
 
         }
 
@@ -166,6 +165,7 @@ export default function Rate() {
 
         } catch (error) {
             toast.error("Something went wrong, Please try again.");
+            console.log(error)
         }
 
     };
@@ -181,7 +181,6 @@ export default function Rate() {
 
     useEffect(() => {
 
-
         if (id !== "new") {
             fetchData();
         }
@@ -189,7 +188,7 @@ export default function Rate() {
             getLocation();
         }
 
-    }, [id])
+    }, [id, fetchData,getLocation])
 
     return (
         <div className="p-4">

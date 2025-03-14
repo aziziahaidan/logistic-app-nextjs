@@ -4,7 +4,7 @@ export async function GET() {
   try {
     const shipmentCollection = await getCollection("shipment");
 
-    let shipment = await shipmentCollection.aggregate([
+    const shipment = await shipmentCollection.aggregate([
       {
         $lookup: {
           from: "company",

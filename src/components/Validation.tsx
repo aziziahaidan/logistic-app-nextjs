@@ -7,7 +7,7 @@ export const validateEmpty = (
 ) => {
     const { name, value } = e.target;
 
-    let isEmpty = validator.isEmpty(value);
+    const isEmpty = validator.isEmpty(value);
 
     if (isEmpty) {
         e.target.classList.add("input-error");
@@ -25,7 +25,7 @@ export const validateNumber = (
     const { name, value } = e.target;
 
 
-    let isNumeric = validator.isNumeric(value)
+    const isNumeric = validator.isNumeric(value)
     console.log(isNumeric)
     if (!isNumeric) {
         e.target.classList.add("input-error");

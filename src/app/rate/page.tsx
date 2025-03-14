@@ -114,7 +114,7 @@ export default function Rate() {
 
             } catch (error) {
                 toast.error('Error, please try again');
-
+                console.log(error)
             }
 
         };

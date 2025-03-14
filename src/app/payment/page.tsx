@@ -179,7 +179,7 @@ export default function Payment() {
 
     const getCompany = async () => {
         const company = await fetchCompany();
-        let tempArr: any = [{ label: "All", value: "" }, ...company]
+        const tempArr: any = [{ label: "All", value: "" }, ...company]
         setCompanyList(tempArr)
 
     }
@@ -202,6 +202,7 @@ export default function Payment() {
         }
         catch (e) {
             toast.error('Error fetching company')
+            console.log(e)
         }
 
     }
@@ -235,7 +236,7 @@ export default function Payment() {
             params.append("dateTo", moment(filter.dateTo).format('YYYY-MM-DD'));
         }
 
-        let url = "/api/payment" + (params.toString() ? `?${params.toString()}` : "");
+        const url = "/api/payment" + (params.toString() ? `?${params.toString()}` : "");
 
         const res = await fetch(url);
 
@@ -284,6 +285,7 @@ export default function Payment() {
             return await res.json();
         } catch (error) {
             toast.error("Something went wrong, Please try again.");
+            console.log(error)
             return null;
         }
     }
@@ -313,13 +315,14 @@ export default function Payment() {
                 setIsLoading(false);
 
             } catch (error) {
+                console.log(error)
                 toast.error('Error, please try again');
 
             }
 
         };
         fetchData();
-    }, [])
+    }, [getCompany])
 
     return (
         <div className="p-4">
