@@ -135,8 +135,6 @@ export default function Staff() {
 
             // const userDetail = await getUserById(String(id));
 
-
-
         };
 
         if (id !== "new") {
